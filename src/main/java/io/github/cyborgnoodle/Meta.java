@@ -27,14 +27,20 @@ import java.awt.*;
 public class Meta {
 
     public static String getVersion(){
-        return "27.1";
+        return "27.2";
     }
 
     public static String getChangelog(){
 
         String s = "```\n";
-        s = s + "27.1\n" +
-                "- added bullshit detector";
+        s = s + "27.2\n" +
+                "- added !help/!?\n" +
+                "- new command framwork (its now 3000% easier to add new commands, yay!)\n" +
+                "  - rewrote all existing commands into the new form\n" +
+                "  - commands now have aliases\n" +
+                "  - command help with !help <command>\n" +
+                "- fixed and improved !levels\n" +
+                "- fixed !what";
 
         s = s + "\n```";
         return s;

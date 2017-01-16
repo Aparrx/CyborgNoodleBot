@@ -16,6 +16,7 @@
 
 package io.github.cyborgnoodle.chatcli.commands;
 
+import com.google.common.base.Joiner;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
@@ -35,9 +36,7 @@ public class WhatCommand extends Command {
 
         //UNSUPPORTED TODO
 
-        String cmd = "";
-
-        String rest = cmd.replace("what","");
+        String rest = Joiner.on(", ").skipNulls().join(args);
 
         if(rest.contains("or")){
             String[] words = rest.split(" ");

@@ -23,8 +23,6 @@ import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Commands;
 import io.github.cyborgnoodle.util.StringUtils;
 
-import java.util.List;
-
 /**
  * Created by arthur on 16.01.17.
  */

@@ -15,4 +15,5 @@
 ### Todo list
 (feel free to implement this yourself, as I am probably too lazy to do it)
 
-- *nothing at the moment*
+- rework XP / Leveling system
+- rework Commands

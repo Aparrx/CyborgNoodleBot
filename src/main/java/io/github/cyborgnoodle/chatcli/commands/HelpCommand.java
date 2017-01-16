@@ -100,7 +100,7 @@ public class HelpCommand extends Command {
                 if(cmd.usage()!=null) usage = usage + "`"+cmd.usage()+"`";
                 else usage = usage + "`!"+cmd.aliases()[0]+"`";
 
-                msg = msg + usage + description() + "\n";
+                msg = msg + usage + " " + cmd.description() + "\n";
             }
 
             e.addField(category,msg,false);

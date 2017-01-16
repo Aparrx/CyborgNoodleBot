@@ -39,8 +39,11 @@ public class StringUtils {
         if (input == null || input.length() <= maxLength) {
             return input;
         }
-        if(input.length()<(maxLength-3)) return input;
-        return input.substring(0, maxLength-3) + "...";
+        try {
+            return input.substring(0, maxLength-3) + "...";
+        } catch (Exception e) {
+            return input;
+        }
     }
 
     public static String removeEmojiAndSymbol(String content) {

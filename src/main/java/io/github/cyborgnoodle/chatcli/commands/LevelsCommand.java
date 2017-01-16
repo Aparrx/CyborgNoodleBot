@@ -43,7 +43,7 @@ public class LevelsCommand extends Command {
         symbols.setGroupingSeparator(' ');
         DecimalFormat deciformat = new DecimalFormat("#,###", symbols);
 
-        CodeTable table = new CodeTable(3,20,20,6);
+        CodeTable table = new CodeTable(4,25,15,6);
         table.setRightBound(false,false,true,true);
 
         int i = 1;

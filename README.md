@@ -3,6 +3,7 @@
 ### Project Structure
 
 #### Specific /r/gorillaz server classes
+
 - `ServerUser` enum of regular users and their IDs + timezone
 (use `CyborgNoodle.getUser(ServerUser)` to get the API User)
 

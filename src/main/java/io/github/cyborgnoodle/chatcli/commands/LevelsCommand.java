@@ -18,6 +18,7 @@ package io.github.cyborgnoodle.chatcli.commands;
 
 import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
+import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.util.StringUtils;
 import io.github.cyborgnoodle.util.table.CodeTable;
@@ -71,9 +72,10 @@ public class LevelsCommand extends Command {
                 name = "UNKNOWN";
             }
 
+            name = StringUtils.removeEmojiAndSymbol(name);
             name = StringUtils.ellipsize(name,19);
 
-            Formatter formatter = new Formatter();
+            //Formatter formatter = new Formatter();
 
             table.addRow("#"+ifiller+i,name,sxp,level.toString());
 

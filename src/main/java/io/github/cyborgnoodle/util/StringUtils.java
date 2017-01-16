@@ -16,6 +16,10 @@
 
 package io.github.cyborgnoodle.util;
 
+import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by arthur on 16.01.17.
  */
@@ -37,4 +41,43 @@ public class StringUtils {
         return input.substring(0, maxLength-3) + "...";
     }
 
+    public static String removeEmojiAndSymbol(String content) {
+        String utf8tweet = "";
+        try {
+            byte[] utf8Bytes = content.getBytes("UTF-8");
+
+            utf8tweet = new String(utf8Bytes, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Pattern unicodeOutliers = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",
+                                Pattern.UNICODE_CASE |
+                                Pattern.CANON_EQ |
+                                Pattern.CASE_INSENSITIVE);
+        Matcher unicodeOutlierMatcher = unicodeOutliers.matcher(utf8tweet);
+
+        utf8tweet = unicodeOutlierMatcher.replaceAll("");
+        return utf8tweet;
+    }
+
+    public static String getVisualisation(long of, long full){
+
+        double zc = (double) of/full;
+        double ta = zc*10;
+
+
+        String s = "[";
+        int i = 1;
+
+        while (i<=10){
+            if(ta>i) s = s + "█";
+            else s = s + " ";
+            i++;
+        }
+
+        s = s + "] "+(ta*10)+"%";
+
+        return s;
+
+    }
 }

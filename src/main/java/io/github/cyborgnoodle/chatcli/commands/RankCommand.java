@@ -16,8 +16,12 @@
 
 package io.github.cyborgnoodle.chatcli.commands;
 
+import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
+import io.github.cyborgnoodle.levels.LevelConverser;
+import io.github.cyborgnoodle.misc.Util;
+import io.github.cyborgnoodle.util.StringUtils;
 
 /**
  * Created by arthur on 16.01.17.
@@ -32,6 +36,47 @@ public class RankCommand extends Command {
     @Override
     public void onCommand(String[] args) {
 
+        User user;
+        if(args.length==0){
+            user = getAuthor();
+        }
+        else {
+            String us = args[0];
+            User u = null;
+            for(User usr : getNoodle().getAPI().getUsers()){
+                if(usr.getMentionTag().equalsIgnoreCase(us)){
+                    u = usr;
+                    break;
+                }
+            }
+            user = u;
+        }
+
+        if(user==null){
+            getChannel().sendMessage("Could not find user!");
+            return;
+        }
+
+        long xptotal = getNoodle().getLevels().getRegistry().getXP(user.getId());
+        int level = getNoodle().getLevels().getRegistry().getLevel(user.getId());
+
+
+        long xpnext = LevelConverser.getXPforLevel(level+1);
+        long xpcurrent = LevelConverser.getXPforLevel(level);
+        long xpleft = xptotal - xpcurrent;
+        long xpfornext = xpnext - xpcurrent;
+
+        long giftleft = getNoodle().getLevels().getRegistry().getGiftStamp(user.getId())-System.currentTimeMillis();
+
+        String tilgift;
+        if(giftleft>=0){
+            tilgift = Util.toHMS(giftleft) + " GTO";
+        }
+        else tilgift = "no GTO";
+
+        String visual = "`"+ StringUtils.getVisualisation(xpleft,xpfornext)+"`";
+
+        getChannel().sendMessage(user.getMentionTag()+": "+xpleft+" / "+xpfornext+" XP"+" ["+xptotal+" "+"XP"+" total] | Level "+level+" | "+tilgift+" | "+visual);
     }
 
     @Override

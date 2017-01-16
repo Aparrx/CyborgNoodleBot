@@ -38,8 +38,13 @@ public abstract class Command {
         this.channel = message.getChannelReceiver();
         this.author = message.getAuthor();
 
+        if(!noodle.hasPermission(author,fullPermission())){
+            channel.sendMessage("Insufficient permissions!");
+            return;
+        }
+
         if(emptyHelp() && args.length==0){
-            channel.sendMessage("Invalid Arguments! Usage: `"+usage()+"`");
+            channel.sendMessage("Invalid arguments! Usage: `"+usage()+"`");
         }
         else onCommand(args);
     }
@@ -51,6 +56,10 @@ public abstract class Command {
     public abstract String usage();
 
     public abstract boolean emptyHelp();
+
+    public Permission fullPermission(){
+        return new Permission();
+    }
 
     public Command(CyborgNoodle noodle){
         this.noodle = noodle;

@@ -39,7 +39,6 @@ public class Commands {
 
         String content = message.getContent();
 
-
         if(content.startsWith("!")){
 
             String[] localargs = content.replace("!","").split(" ");
@@ -55,7 +54,12 @@ public class Commands {
             Command command = commands.get(cmd);
 
             if(command!=null){
-                command.execute(message,args);
+                try {
+                    command.execute(message,args);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    message.getChannelReceiver().sendMessage("Internal Error!");
+                }
             }
             else{
                 message.getChannelReceiver().sendMessage("[Invalid Command]");

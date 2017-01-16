@@ -24,7 +24,8 @@ import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.permissions.Role;
 import io.github.cyborgnoodle.chatbot.ChatBot;
 import io.github.cyborgnoodle.chatcli.ChatCommands;
-import io.github.cyborgnoodle.chatcli.commands.LevelsCommand;
+import io.github.cyborgnoodle.chatcli.Permission;
+import io.github.cyborgnoodle.chatcli.commands.*;
 import io.github.cyborgnoodle.cli.CommandLine;
 import io.github.cyborgnoodle.cli.CommandLineRunnable;
 import io.github.cyborgnoodle.cli.Commands;
@@ -321,15 +322,24 @@ public class CyborgNoodle {
 
     public void registerCommands(){
         io.github.cyborgnoodle.chatcli.Commands.register(new LevelsCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new RankCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new WordCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new WordStatsCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new AvatarCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new WordsCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new TimeCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new FlipCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new WhatCommand(this));
+    }
+
+    public boolean hasPermission(User user, Permission permission){
+        return permission.has(this,user);
     }
 
     public User getUser(ServerUser user){
         try {
             return api.getUserById(user.getID()).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;
         }

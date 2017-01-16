@@ -24,6 +24,7 @@ import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.permissions.Role;
 import io.github.cyborgnoodle.chatbot.ChatBot;
 import io.github.cyborgnoodle.chatcli.ChatCommands;
+import io.github.cyborgnoodle.chatcli.commands.LevelsCommand;
 import io.github.cyborgnoodle.cli.CommandLine;
 import io.github.cyborgnoodle.cli.CommandLineRunnable;
 import io.github.cyborgnoodle.cli.Commands;
@@ -131,6 +132,8 @@ public class CyborgNoodle {
         saveman.loadAll();
 
         reddit.setUp();
+
+        registerCommands();
 
         //say(SystemMessages.getStart());
     }
@@ -314,6 +317,10 @@ public class CyborgNoodle {
 
     public synchronized void doLater(Runnable r, long millis){
         later.put(r,System.currentTimeMillis()+millis);
+    }
+
+    public void registerCommands(){
+        io.github.cyborgnoodle.chatcli.Commands.register(new LevelsCommand(this));
     }
 
     public User getUser(ServerUser user){

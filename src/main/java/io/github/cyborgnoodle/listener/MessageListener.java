@@ -24,6 +24,7 @@ import de.btobastian.javacord.listener.message.MessageDeleteListener;
 import de.btobastian.javacord.listener.message.MessageEditListener;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.Random;
+import io.github.cyborgnoodle.chatcli.Commands;
 import io.github.cyborgnoodle.misc.AutoConverter;
 import io.github.cyborgnoodle.misc.Util;
 import io.github.cyborgnoodle.msg.ConversationMessages;
@@ -57,6 +58,7 @@ public class MessageListener implements MessageCreateListener, MessageEditListen
 
                 noodle.getLevels().onMessage(message.getAuthor());
                 noodle.getChatCommands().onMessage(message);
+                Commands.execute(message);
                 //noodle.getBadWords().onMessage(message);
 
                 noodle.getWordStats().onMessage(message);

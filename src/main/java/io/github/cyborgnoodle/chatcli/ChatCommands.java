@@ -353,58 +353,6 @@ public class ChatCommands {
             return;
         }
 
-
-        if(cmd.equals("levels")){
-
-            DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-            symbols.setGroupingSeparator(' ');
-            DecimalFormat deciformat = new DecimalFormat("#,###", symbols);
-
-            int i = 1;
-            String msg = "**Leaderbord**\n```";
-            msg = msg + "    "+new Formatter().format("%-20s%20s%6s","NAME","XP","LEVEL") + "\n";
-            msg = msg + "\n";
-            for(String uid : noodle.getLevels().getLeaderboard().keySet()){
-                Long xp = noodle.getLevels().getLeaderboard().get(uid);
-
-                String sxp = deciformat.format(xp);
-                Integer level = noodle.getLevels().getRegistry().getLevel(uid);
-                String ifiller = getWhitespaces(2-Integer.valueOf(i).toString().length());
-                String name;
-                try {
-                    User user = noodle.getAPI().getUserById(uid).get();
-                    name = user.getNickname(noodle.getServer());
-                    if(name==null){
-                        name = user.getName();
-                        if(name==null) name = "UNKNOWN";
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                    name = "UNKNOWN";
-                }
-
-                name = ellipsize(name,19);
-
-                String filler = getWhitespaces(20-name.length());
-                String xpfiller = getWhitespaces(10-xp.toString().length());
-
-                Formatter formatter = new Formatter();
-
-                msg = msg + "#"+ifiller+i+" "+formatter.format("%-20s%20s%6s",name,sxp,level.toString()) + "\n";
-
-                //msg = msg + "#"+ifiller+i+" "+name+filler+"  -  "+xp+xpfiller+" "+"XP"+"  -  Level "+level+ "\n";
-
-                i++;
-                if(i>20) break;
-            }
-
-            msg = msg + "```";
-
-
-            channel.sendMessage(msg);
-            return;
-        }
-
         if(args[0].equalsIgnoreCase("fuxkit")){
             noodle.getAPI().setGame("with herself");
 
@@ -851,8 +799,9 @@ public class ChatCommands {
 
         // NOT CATCHED
 
-        channel.sendMessage("["+author.getName()+" - invalid command]");
-        dmsg.delete();
+        //disabled for new feature
+        //channel.sendMessage("["+author.getName()+" - invalid command]");
+        //dmsg.delete();
 
     }
 

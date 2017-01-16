@@ -2,6 +2,15 @@
 
 ### Project Structure
 
+#### Dependencies
+
+- Java `1.8.0_92` or newer
+- JavaCord `2.0.14` or newer: https://github.com/BtoBastian/JavaCord
+- EmojiLibrary by vdurmont: https://github.com/vdurmont/emoji-java
+- Gson `2.7` or newer: https://github.com/google/gson
+- Okio `1.11` or newer: https://github.com/square/okio
+- JRaw `0.9` or newer: https://github.com/thatJavaNerd/JRAW
+
 #### Specific /r/gorillaz server classes
 
 - `ServerUser` enum of regular users and their IDs + timezone

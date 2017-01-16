@@ -72,7 +72,17 @@ public class PollCommand extends Command {
     }
 
     @Override
+    public String description() {
+        return "start a new poll";
+    }
+
+    @Override
     public Permission fullPermission() {
         return new Permission(ServerRole.STAFF);
+    }
+
+    @Override
+    public String category() {
+        return "Poll commands";
     }
 }

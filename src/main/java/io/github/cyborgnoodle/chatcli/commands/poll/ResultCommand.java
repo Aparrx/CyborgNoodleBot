@@ -14,66 +14,37 @@
  * limitations under the License.
  */
 
-package io.github.cyborgnoodle.chatcli.commands.meme;
+package io.github.cyborgnoodle.chatcli.commands.poll;
 
 import de.btobastian.javacord.entities.message.embed.EmbedBuilder;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
-import io.github.cyborgnoodle.msg.SystemMessages;
 import io.github.cyborgnoodle.server.ServerRole;
-
-import java.awt.*;
 
 /**
  * Created by arthur on 16.01.17.
  */
-public class FuxkitCommand extends Command{
+public class ResultCommand extends Command {
 
-    public FuxkitCommand(CyborgNoodle noodle) {
+    public ResultCommand(CyborgNoodle noodle) {
         super(noodle);
     }
 
     @Override
-    public void onCommand(String[] args) {
-
-        getNoodle().getAPI().setGame("with herself");
-
-        Boolean force = false;
-        if(args.length>1){
-            if(args[1].equalsIgnoreCase("force")){
-                if(getNoodle().hasPermission(getAuthor(),new Permission(ServerRole.STAFF))) force = true;
-            }
-        }
-
-        int i = Random.randInt(0,9);
-
-        if(i==0 || force){
-            String message = SystemMessages.getSmut();
-
-            EmbedBuilder embed = new EmbedBuilder();
-
-            embed.setColor(new Color(191,191,191));
-            embed.setImage("https://goo.gl/59skAR");
-
-            getChannel().sendMessage(message,embed);
-        }
+    public void onCommand(String[] args) throws Exception {
+        EmbedBuilder em = getNoodle().getPolls().result();
+        getChannel().sendMessage("",em);
     }
 
     @Override
     public String[] aliases() {
-        return new String[]{"fuxkit"};
+        return new String[]{"result","results"};
     }
 
     @Override
     public String usage() {
         return null;
-    }
-
-    @Override
-    public String category() {
-        return "Meme commands";
     }
 
     @Override
@@ -83,6 +54,16 @@ public class FuxkitCommand extends Command{
 
     @Override
     public String description() {
-        return "...";
+        return "show poll results";
+    }
+
+    @Override
+    public Permission fullPermission() {
+        return new Permission(ServerRole.STAFF);
+    }
+
+    @Override
+    public String category() {
+        return "Poll commands";
     }
 }

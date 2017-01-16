@@ -14,40 +14,48 @@
  * limitations under the License.
  */
 
-package io.github.cyborgnoodle.chatcli.commands;
+package io.github.cyborgnoodle.chatcli.commands.poll;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.misc.WordStats;
 
 /**
  * Created by arthur on 16.01.17.
  */
-public class WordStatsCommand extends Command {
+public class VoteCommand extends Command {
 
-    public WordStatsCommand(CyborgNoodle noodle) {
+    public VoteCommand(CyborgNoodle noodle) {
         super(noodle);
     }
 
     @Override
-    public void onCommand(String[] args) {
-        getChannel().sendMessage("**Registered different words:** "+getNoodle().getWordStats().getData().getMap().size());
-        getChannel().sendMessage("**Registered exceptions:** "+ WordStats.EXCEPT.length);
-        return;
+    public void onCommand(String[] args) throws Exception {
+        String choice = args[0];
+        getNoodle().getPolls().vote(getAuthor(),choice,getChannel(),getMessage());
     }
 
     @Override
     public String[] aliases() {
-        return new String[]{"wordstats","wstats","ws"};
+        return new String[]{"vote","v"};
     }
 
     @Override
     public String usage() {
-        return null;
+        return "!vote <option>";
     }
 
     @Override
     public boolean emptyHelp() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public String description() {
+        return "vote for a poll option";
+    }
+
+    @Override
+    public String category() {
+        return "Poll commands";
     }
 }

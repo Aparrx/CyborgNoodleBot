@@ -57,7 +57,6 @@ public class MessageListener implements MessageCreateListener, MessageEditListen
                 }
 
                 noodle.getLevels().onMessage(message.getAuthor());
-                noodle.getChatCommands().onMessage(message);
                 Commands.execute(message);
                 //noodle.getBadWords().onMessage(message);
 

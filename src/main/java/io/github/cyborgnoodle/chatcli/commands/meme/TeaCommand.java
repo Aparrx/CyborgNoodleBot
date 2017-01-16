@@ -18,6 +18,8 @@ package io.github.cyborgnoodle.chatcli.commands.meme;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
+import io.github.cyborgnoodle.chatcli.Permission;
+import io.github.cyborgnoodle.server.ServerRole;
 
 /**
  * Created by arthur on 16.01.17.
@@ -47,6 +49,16 @@ public class TeaCommand extends Command {
     @Override
     public boolean emptyHelp() {
         return false;
+    }
+
+    @Override
+    public String description() {
+        return "tell roy to have some tea";
+    }
+
+    @Override
+    public Permission fullPermission() {
+        return new Permission(ServerRole.REGULAR);
     }
 
     @Override

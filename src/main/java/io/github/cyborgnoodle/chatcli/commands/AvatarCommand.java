@@ -62,4 +62,9 @@ public class AvatarCommand extends Command {
     public boolean emptyHelp() {
         return true;
     }
+
+    @Override
+    public String description() {
+        return "show the avatar of a user";
+    }
 }

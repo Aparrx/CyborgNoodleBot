@@ -14,43 +14,48 @@
  * limitations under the License.
  */
 
-package io.github.cyborgnoodle.chatcli.commands;
+package io.github.cyborgnoodle.chatcli.commands.meme;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.misc.BadWords;
+import io.github.cyborgnoodle.misc.funtance.stories.GenericSentenceGenerator;
 
 /**
  * Created by arthur on 16.01.17.
  */
-public class WordCommand extends Command {
+public class FunCommand extends Command {
 
-    public WordCommand(CyborgNoodle noodle) {
+    public FunCommand(CyborgNoodle noodle) {
         super(noodle);
     }
 
     @Override
-    public void onCommand(String[] args) {
-        String word = BadWords.adjustMsg(args[0].toLowerCase());
-        if(getNoodle().getWordStats().getData().getEntries().containsKey(word)){
-            Long count = getNoodle().getWordStats().getData().getEntries().get(word).getCount();
-            getChannel().sendMessage("**"+word+"** - "+count+"x");
-        } else getChannel().sendMessage("Nobody ever said this word on here or it is on the exception list! "+getAuthor().getMentionTag());
-
+    public void onCommand(String[] args) throws Exception {
+        getChannel().sendMessage(GenericSentenceGenerator.create());
     }
 
     @Override
     public String[] aliases() {
-        return new String[]{"word","wrd","w"};
+        return new String[]{"fun","sentence","fungen"};
     }
 
     @Override
     public String usage() {
-        return "!word <word>";
+        return null;
     }
 
     @Override
     public boolean emptyHelp() {
-        return true;
+        return false;
+    }
+
+    @Override
+    public String description() {
+        return null;
+    }
+
+    @Override
+    public String category() {
+        return "generate a funny sentence";
     }
 }

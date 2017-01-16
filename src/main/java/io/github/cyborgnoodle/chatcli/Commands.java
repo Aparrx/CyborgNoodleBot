@@ -35,6 +35,10 @@ public class Commands {
         }
     }
 
+    public static HashMap<String, Command> getCommands() {
+        return commands;
+    }
+
     public static void execute(Message message){
 
         String content = message.getContent();

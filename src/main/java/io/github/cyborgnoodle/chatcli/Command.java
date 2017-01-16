@@ -44,9 +44,13 @@ public abstract class Command {
         }
 
         if(emptyHelp() && args.length==0){
-            channel.sendMessage("Invalid arguments! Usage: `"+usage()+"`");
+            showInvalidArguments();
         }
         else onCommand(args);
+    }
+
+    public void showInvalidArguments(){
+        channel.sendMessage("Invalid arguments! Usage: `"+usage()+"`");
     }
 
     public abstract void onCommand(String[] args) throws Exception;
@@ -56,6 +60,8 @@ public abstract class Command {
     public abstract String usage();
 
     public abstract boolean emptyHelp();
+
+    public abstract String description();
 
     public Permission fullPermission(){
         return new Permission();

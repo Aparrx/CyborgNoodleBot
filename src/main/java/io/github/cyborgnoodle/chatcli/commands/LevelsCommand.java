@@ -157,4 +157,9 @@ public class LevelsCommand extends Command {
     public boolean emptyHelp() {
         return false;
     }
+
+    @Override
+    public String description() {
+        return "show the leaderboard";
+    }
 }

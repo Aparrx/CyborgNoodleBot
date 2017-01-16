@@ -93,4 +93,9 @@ public class RankCommand extends Command {
     public boolean emptyHelp() {
         return false;
     }
+
+    @Override
+    public String description() {
+        return "show your current XP / Level / GTO";
+    }
 }

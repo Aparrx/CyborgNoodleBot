@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package io.github.cyborgnoodle.chatcli.commands;
+package io.github.cyborgnoodle.chatcli.words;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
+import io.github.cyborgnoodle.misc.WordStats;
 
 /**
  * Created by arthur on 16.01.17.
  */
-public class StatsCommand extends Command {
+public class WordStatsCommand extends Command {
 
-    public StatsCommand(CyborgNoodle noodle) {
+    public WordStatsCommand(CyborgNoodle noodle) {
         super(noodle);
     }
 
     @Override
     public void onCommand(String[] args) {
-        getChannel().sendMessage("**Total Message count: **"+getNoodle().getLevels().getRegistry().getMsgs());
+        getChannel().sendMessage("**Registered different words:** "+getNoodle().getWordStats().getData().getMap().size());
+        getChannel().sendMessage("**Registered exceptions:** "+ WordStats.EXCEPT.length);
+        return;
     }
 
     @Override
     public String[] aliases() {
-        return new String[]{"stats","statistics"};
+        return new String[]{"wordstats","wstats","ws"};
     }
 
     @Override
@@ -50,6 +53,13 @@ public class StatsCommand extends Command {
 
     @Override
     public String description() {
-        return "show server statistics";
+        return "show word counter statistics";
     }
+
+    @Override
+    public String category() {
+        return "Word commands";
+    }
+
+
 }

@@ -14,42 +14,53 @@
  * limitations under the License.
  */
 
-package io.github.cyborgnoodle.chatcli.commands;
+package io.github.cyborgnoodle.chatcli.words;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
+import io.github.cyborgnoodle.misc.BadWords;
 
 /**
  * Created by arthur on 16.01.17.
  */
-public class StatsCommand extends Command {
+public class WordCommand extends Command {
 
-    public StatsCommand(CyborgNoodle noodle) {
+    public WordCommand(CyborgNoodle noodle) {
         super(noodle);
     }
 
     @Override
     public void onCommand(String[] args) {
-        getChannel().sendMessage("**Total Message count: **"+getNoodle().getLevels().getRegistry().getMsgs());
+        String word = BadWords.adjustMsg(args[0].toLowerCase());
+        if(getNoodle().getWordStats().getData().getEntries().containsKey(word)){
+            Long count = getNoodle().getWordStats().getData().getEntries().get(word).getCount();
+            getChannel().sendMessage("**"+word+"** - "+count+"x");
+        } else getChannel().sendMessage("Nobody ever said this word on here or it is on the exception list! "+getAuthor().getMentionTag());
+
     }
 
     @Override
     public String[] aliases() {
-        return new String[]{"stats","statistics"};
+        return new String[]{"word","wrd","w"};
     }
 
     @Override
     public String usage() {
-        return null;
+        return "!word <word>";
     }
 
     @Override
     public boolean emptyHelp() {
-        return false;
+        return true;
     }
 
     @Override
     public String description() {
-        return "show server statistics";
+        return "show how much a word has been used";
+    }
+
+    @Override
+    public String category() {
+        return "Word commands";
     }
 }

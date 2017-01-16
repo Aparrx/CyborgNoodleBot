@@ -58,4 +58,9 @@ public class TimeCommand extends Command {
     public boolean emptyHelp() {
         return false;
     }
+
+    @Override
+    public String description() {
+        return "show local time for regular users";
+    }
 }

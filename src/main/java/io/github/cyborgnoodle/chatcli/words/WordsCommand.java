@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.cyborgnoodle.chatcli.commands;
+package io.github.cyborgnoodle.chatcli.words;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.Log;
@@ -96,5 +96,15 @@ public class WordsCommand extends Command {
     @Override
     public boolean emptyHelp() {
         return false;
+    }
+
+    @Override
+    public String description() {
+        return "show word toplist";
+    }
+
+    @Override
+    public String category() {
+        return "Word commands";
     }
 }

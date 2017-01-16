@@ -49,4 +49,9 @@ public class WhenCommand extends Command {
     public boolean emptyHelp() {
         return false;
     }
+
+    @Override
+    public String description() {
+        return "show when the next XP bomb drops";
+    }
 }

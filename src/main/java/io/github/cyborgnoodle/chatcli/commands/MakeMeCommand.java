@@ -166,4 +166,9 @@ public class MakeMeCommand extends Command {
     public boolean emptyHelp() {
         return true;
     }
+
+    @Override
+    public String description() {
+        return "change your character role";
+    }
 }

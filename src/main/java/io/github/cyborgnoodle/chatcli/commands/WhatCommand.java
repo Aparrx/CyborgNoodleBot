@@ -73,4 +73,9 @@ public class WhatCommand extends Command {
     public boolean emptyHelp() {
         return false;
     }
+
+    @Override
+    public String description() {
+        return "let the cyborg decide";
+    }
 }

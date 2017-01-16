@@ -51,11 +51,11 @@ public class FunCommand extends Command {
 
     @Override
     public String description() {
-        return null;
+        return "generate a funny sentence";
     }
 
     @Override
     public String category() {
-        return "generate a funny sentence";
+        return "Meme commands";
     }
 }

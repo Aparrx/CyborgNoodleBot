@@ -35,6 +35,7 @@ public class StringUtils {
     }
 
     public static String ellipsize(String input, int maxLength) {
+       if(input.length()==0) return input;
         if (input == null || input.length() <= maxLength) {
             return input;
         }

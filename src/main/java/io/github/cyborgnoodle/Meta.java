@@ -40,7 +40,12 @@ public class Meta {
                 "  - commands now have aliases\n" +
                 "  - command help with !help <command>\n" +
                 "- fixed and improved !levels\n" +
-                "- fixed !what";
+                "- fixed !what\n" +
+                "\n" +
+                "27.2.1\n" +
+                "- fixed !levels internal error: fixed string ellipsize()\n" +
+                "- added description and category to !fun\n" +
+                "- added category to !result";
 
         s = s + "\n```";
         return s;

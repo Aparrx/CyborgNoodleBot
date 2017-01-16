@@ -36,7 +36,7 @@ public enum ServerUser {
     PEZ("72955546168209408",TimeZone.getTimeZone("GMT+11")),
     ROY("217783026275319810",TimeZone.getTimeZone("GMT")),
     KIU("178591608416108545",TimeZone.getTimeZone("GMT+1")),
-    SPAGET("235608192833421313",TimeZone.getTimeZone("GMT-5")),
+    SPAGET("235608192833421313",TimeZone.getTimeZone("EST")),
     ;
 
     String id;

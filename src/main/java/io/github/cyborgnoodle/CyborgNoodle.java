@@ -27,6 +27,8 @@ import io.github.cyborgnoodle.chatcli.ChatCommands;
 import io.github.cyborgnoodle.chatcli.Permission;
 import io.github.cyborgnoodle.chatcli.commands.*;
 import io.github.cyborgnoodle.chatcli.commands.meme.FuxkitCommand;
+import io.github.cyborgnoodle.chatcli.commands.meme.TeaCommand;
+import io.github.cyborgnoodle.chatcli.commands.poll.PollCommand;
 import io.github.cyborgnoodle.cli.CommandLine;
 import io.github.cyborgnoodle.cli.CommandLineRunnable;
 import io.github.cyborgnoodle.cli.Commands;
@@ -42,8 +44,6 @@ import io.github.cyborgnoodle.news.Reddit;
 import io.github.cyborgnoodle.server.ServerChannel;
 import io.github.cyborgnoodle.server.ServerRole;
 import io.github.cyborgnoodle.server.ServerUser;
-import net.dean.jraw.util.JrawUtils;
-import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -338,6 +338,9 @@ public class CyborgNoodle {
         io.github.cyborgnoodle.chatcli.Commands.register(new ShortCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new VersionCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new MakeMeCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new TeaCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new PollCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register();
         io.github.cyborgnoodle.chatcli.Commands.register();
         io.github.cyborgnoodle.chatcli.Commands.register();
     }

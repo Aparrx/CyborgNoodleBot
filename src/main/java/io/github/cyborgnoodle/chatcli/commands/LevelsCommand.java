@@ -20,6 +20,7 @@ import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.util.StringUtils;
+import io.github.cyborgnoodle.util.table.CodeTable;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -37,6 +38,63 @@ public class LevelsCommand extends Command {
 
     @Override
     public void onCommand(String[] args) {
+
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(' ');
+        DecimalFormat deciformat = new DecimalFormat("#,###", symbols);
+
+        CodeTable table = new CodeTable(3,20,20,6);
+        table.setRightBound(false,false,true,true);
+
+        int i = 1;
+        String title = "**Leaderboard**";
+
+        table.addRow("","NAME","XP","LEVEL");
+        table.addRow("","","","");
+
+        for(String uid : getNoodle().getLevels().getLeaderboard().keySet()){
+            Long xp = getNoodle().getLevels().getLeaderboard().get(uid);
+
+            String sxp = deciformat.format(xp);
+            Integer level = getNoodle().getLevels().getRegistry().getLevel(uid);
+            String ifiller = StringUtils.getWhitespaces(2-Integer.valueOf(i).toString().length());
+            String name;
+            try {
+                User user = getNoodle().getAPI().getUserById(uid).get();
+                name = user.getNickname(getNoodle().getServer());
+                if(name==null){
+                    name = user.getName();
+                    if(name==null) name = "UNKNOWN";
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                name = "UNKNOWN";
+            }
+
+            name = StringUtils.ellipsize(name,19);
+
+            Formatter formatter = new Formatter();
+
+            table.addRow("#"+ifiller+i,name,sxp,level.toString());
+
+            //msg = msg + "#"+ifiller+i+" "+formatter.format("%-20s%20s%6s",name,sxp,level.toString()) + "\n";
+
+            //msg = msg + "#"+ifiller+i+" "+name+filler+"  -  "+xp+xpfiller+" "+"XP"+"  -  Level "+level+ "\n";
+
+            i++;
+            if(i>20) break;
+        }
+
+        String codeblock = table.asCodeBlock();
+
+        String msg = title + "\n" +codeblock;
+
+
+        getChannel().sendMessage(msg);
+
+    }
+
+    private void old(String[] args){
 
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator(' ');
@@ -67,9 +125,6 @@ public class LevelsCommand extends Command {
 
             name = StringUtils.ellipsize(name,19);
 
-            String filler = StringUtils.getWhitespaces(20-name.length());
-            String xpfiller = StringUtils.getWhitespaces(10-xp.toString().length());
-
             Formatter formatter = new Formatter();
 
             msg = msg + "#"+ifiller+i+" "+formatter.format("%-20s%20s%6s",name,sxp,level.toString()) + "\n";
@@ -84,12 +139,11 @@ public class LevelsCommand extends Command {
 
 
         getChannel().sendMessage(msg);
-
     }
 
     @Override
     public String[] aliases() {
-        return new String[]{"levels","lvls","lvl","leaderboard","toplist"};
+        return new String[]{};
     }
 
     @Override

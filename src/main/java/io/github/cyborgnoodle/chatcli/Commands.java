@@ -27,7 +27,7 @@ import java.util.HashMap;
  */
 public class Commands {
 
-    private static HashMap<String,Command> commands;
+    private static HashMap<String,Command> commands = new HashMap<>();
 
     public static void register(Command command){
         for(String alias : command.aliases()){

@@ -26,6 +26,7 @@ import io.github.cyborgnoodle.chatbot.ChatBot;
 import io.github.cyborgnoodle.chatcli.ChatCommands;
 import io.github.cyborgnoodle.chatcli.Permission;
 import io.github.cyborgnoodle.chatcli.commands.*;
+import io.github.cyborgnoodle.chatcli.commands.meme.FuxkitCommand;
 import io.github.cyborgnoodle.cli.CommandLine;
 import io.github.cyborgnoodle.cli.CommandLineRunnable;
 import io.github.cyborgnoodle.cli.Commands;
@@ -330,6 +331,15 @@ public class CyborgNoodle {
         io.github.cyborgnoodle.chatcli.Commands.register(new TimeCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new FlipCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new WhatCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new RanksCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new FuxkitCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new StatsCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new WhenCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new ShortCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new VersionCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new MakeMeCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register();
+        io.github.cyborgnoodle.chatcli.Commands.register();
     }
 
     public boolean hasPermission(User user, Permission permission){

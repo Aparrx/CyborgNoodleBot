@@ -32,7 +32,7 @@ public abstract class Command {
 
     private CyborgNoodle noodle;
 
-    public void execute(Message message, String[] args){
+    public void execute(Message message, String[] args) throws Exception{
 
         this.message = message;
         this.channel = message.getChannelReceiver();
@@ -49,7 +49,7 @@ public abstract class Command {
         else onCommand(args);
     }
 
-    public abstract void onCommand(String[] args);
+    public abstract void onCommand(String[] args) throws Exception;
 
     public abstract String[] aliases();
 
@@ -59,6 +59,10 @@ public abstract class Command {
 
     public Permission fullPermission(){
         return new Permission();
+    }
+
+    public String category(){
+        return "Main commands";
     }
 
     public Command(CyborgNoodle noodle){

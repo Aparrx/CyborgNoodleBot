@@ -17,60 +17,48 @@
 package io.github.cyborgnoodle.chatcli.commands;
 
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.msg.ConversationMessages;
+import io.github.cyborgnoodle.misc.GoogleURLShortening;
+
+import java.net.MalformedURLException;
 
 /**
  * Created by arthur on 16.01.17.
  */
-public class WhatCommand extends Command {
+public class ShortCommand extends Command {
 
-    public WhatCommand(CyborgNoodle noodle) {
+    public ShortCommand(CyborgNoodle noodle) {
         super(noodle);
     }
 
     @Override
     public void onCommand(String[] args) {
-
-        //UNSUPPORTED TODO
-
-        String cmd = "";
-
-        String rest = cmd.replace("what","");
-
-        if(rest.contains("or")){
-            String[] words = rest.split(" ");
-            if(words.length>2){
-                String[] sides = rest.split("or");
-                String left = sides[0];
-                String right = sides[1];
-
-                if(Random.choose()){
-                    getChannel().sendMessage(getAuthor().getMentionTag()+" "+left);
-                }
-                else {
-                    getChannel().sendMessage(getAuthor().getMentionTag()+" "+right);
-                }
+        String url = args[0];
+        try {
+            try {
+                String shorturl = GoogleURLShortening.shortenUrl(url);
+                getChannel().sendMessage(getAuthor().getMentionTag()+" I shortened your URL for you: "+shorturl);
+            } catch (MalformedURLException e) {
+                getChannel().sendMessage("This is not a valid URL "+getAuthor().getMentionTag());
             }
-            else  getChannel().sendMessage(ConversationMessages.getNotUnderstood());
-        }
-        else  getChannel().sendMessage(ConversationMessages.getNotUnderstood());
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public String[] aliases() {
-        return new String[]{"what","which"};
+        return new String[]{"short","urlshort"};
     }
 
     @Override
     public String usage() {
-        return null;
+        return "!short <url>";
     }
 
     @Override
     public boolean emptyHelp() {
-        return false;
+        return true;
     }
 }

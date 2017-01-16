@@ -39,6 +39,7 @@ public class StringUtils {
         if (input == null || input.length() <= maxLength) {
             return input;
         }
+        if(input.length()<(maxLength-3)) return input;
         return input.substring(0, maxLength-3) + "...";
     }
 

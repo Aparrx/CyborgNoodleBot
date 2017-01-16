@@ -27,7 +27,7 @@ import java.awt.*;
 public class Meta {
 
     public static String getVersion(){
-        return "27.2";
+        return "27.2.1-1";
     }
 
     public static String getChangelog(){
@@ -45,7 +45,9 @@ public class Meta {
                 "27.2.1\n" +
                 "- fixed !levels internal error: fixed string ellipsize()\n" +
                 "- added description and category to !fun\n" +
-                "- added category to !result";
+                "- added category to !result\n" +
+                "27.2.1-1\n" +
+                "- !levels fix 2";
 
         s = s + "\n```";
         return s;
@@ -70,7 +72,7 @@ public class Meta {
                 "Version: "+osver+"\n" +
                 "Java: "+vmversion,true);
 
-        embed.setFooter("Developed with a lot of time and coffee by Enveed.");
+        embed.setFooter("Developed with a lot of suffering and unpaid work by Enveed.");
 
         return embed;
     }

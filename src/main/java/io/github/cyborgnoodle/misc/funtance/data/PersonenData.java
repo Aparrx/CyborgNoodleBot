@@ -17,14 +17,27 @@
 package io.github.cyborgnoodle.misc.funtance.data;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by arthur on 06.03.16.
  */
 public class PersonenData {
 
-    public static List<String> getAll(){
+    private static Set<String> data = new HashSet<>(getAll());
+
+    public static Set<String> getData() {
+        return data;
+    }
+
+    public static void setData(Set<String> d) {
+        data = d;
+        data.addAll(getAll());
+    }
+
+    private static List<String> getAll(){
 
         List<String> l = new ArrayList<>();
 
@@ -54,9 +67,6 @@ public class PersonenData {
         l.add("A subreddit mod");
         l.add("Someone from the other discord");
         l.add("Marvelking 9000");
-
-        l.add("Frank Ocean");
-        l.add("Childish Gambino");
 
         l.add("Damon");
         l.add("Jamie");

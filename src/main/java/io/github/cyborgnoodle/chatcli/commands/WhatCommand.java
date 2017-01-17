@@ -36,7 +36,7 @@ public class WhatCommand extends Command {
 
         //UNSUPPORTED TODO
 
-        String rest = Joiner.on(", ").skipNulls().join(args);
+        String rest = Joiner.on(" ").skipNulls().join(args);
 
         if(rest.contains("or")){
             String[] words = rest.split(" ");

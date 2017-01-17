@@ -19,14 +19,27 @@ package io.github.cyborgnoodle.misc.funtance.data;
 import io.github.cyborgnoodle.Random;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by arthur on 11.03.16.
  */
 public class UmstandData {
 
-    public static List<String> getAll(){
+    private static Set<String> data = new HashSet<>(getAll());
+
+    public static Set<String> getData() {
+        return data;
+    }
+
+    public static void setData(Set<String> d) {
+        data = d;
+        data.addAll(getAll());
+    }
+
+    private static List<String> getAll(){
 
         List<String> l = new ArrayList<>();
 

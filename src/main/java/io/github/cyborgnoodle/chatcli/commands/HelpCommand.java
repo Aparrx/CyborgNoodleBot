@@ -67,6 +67,20 @@ public class HelpCommand extends Command {
 
         desc = desc + "\n";
 
+        if(cmd.fullPermission().getLevel()!=0 && cmd.fullPermission().getRole()!=null){
+            desc = desc + "**Permissions: ** Requires level "+cmd.fullPermission().getLevel()+" and role "+getNoodle().getRole(cmd.fullPermission().getRole()).getName()+" or up!";
+        }
+        else {
+            if(cmd.fullPermission().getLevel()!=0 && cmd.fullPermission().getRole()==null){
+                desc = desc + "**Permissions: ** Requires level "+cmd.fullPermission().getLevel()+" or up!";
+            }
+            else if (cmd.fullPermission().getLevel()==0 && cmd.fullPermission().getRole()!=null){
+                desc = desc + "**Permissions: ** Requires "+getNoodle().getRole(cmd.fullPermission().getRole())+" role!";
+            }
+        }
+
+        desc = desc + "\n";
+
         e.setDescription(desc);
 
         e.setFooter(cmd.category());

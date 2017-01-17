@@ -71,4 +71,11 @@ public class Permission {
         return roleperm && lvlperm;
     }
 
+    public ServerRole getRole() {
+        return role;
+    }
+
+    public int getLevel() {
+        return level;
+    }
 }

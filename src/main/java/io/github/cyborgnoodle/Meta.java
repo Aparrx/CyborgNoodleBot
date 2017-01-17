@@ -27,27 +27,14 @@ import java.awt.*;
 public class Meta {
 
     public static String getVersion(){
-        return "27.2.1-1";
+        return "27.3";
     }
 
     public static String getChangelog(){
 
         String s = "```\n";
-        s = s + "27.2\n" +
-                "- added !help/!?\n" +
-                "- new command framwork (its now 3000% easier to add new commands, yay!)\n" +
-                "  - rewrote all existing commands into the new form\n" +
-                "  - commands now have aliases\n" +
-                "  - command help with !help <command>\n" +
-                "- fixed and improved !levels\n" +
-                "- fixed !what\n" +
-                "\n" +
-                "27.2.1\n" +
-                "- fixed !levels internal error: fixed string ellipsize()\n" +
-                "- added description and category to !fun\n" +
-                "- added category to !result\n" +
-                "27.2.1-1\n" +
-                "- !levels fix 2";
+        s = s + "27.3\n" +
+                "- added !sue, !chore and !exceptions";
 
         s = s + "\n```";
         return s;

@@ -16,42 +16,60 @@
 
 package io.github.cyborgnoodle.chatcli.commands.meme;
 
+import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
+import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.misc.funtance.stories.GenericSentenceGenerator;
+import io.github.cyborgnoodle.misc.funtance.data.ObjectData;
+import io.github.cyborgnoodle.misc.funtance.data.OrtData;
+import io.github.cyborgnoodle.misc.funtance.data.VerbData;
 
 /**
- * Created by arthur on 16.01.17.
+ * Created by arthur on 17.01.17.
  */
-public class FunCommand extends Command {
+public class SueCommand extends Command {
 
-    public FunCommand(CyborgNoodle noodle) {
+    public SueCommand(CyborgNoodle noodle) {
         super(noodle);
     }
 
     @Override
     public void onCommand(String[] args) throws Exception {
-        getChannel().sendMessage(GenericSentenceGenerator.create());
+
+        String mention = args[0];
+        String id = mention.replace("<@", "").replace(">", "");
+        User user = getNoodle().getAPI().getCachedUserById(id);
+
+        if(user==null){
+            getChannel().sendMessage("User not found!");
+            return;
+        }
+
+        String verb = Random.choose(VerbData.getAll());
+        String objects = Random.choose(ObjectData.getAll());
+        String place = Random.choose(OrtData.getAll());
+
+        getChannel().sendMessage(getAuthor().getMentionTag()+" sued "+user.getMentionTag()+" because he / she "+verb+" "+objects+" "+place+"!");
     }
 
     @Override
     public String[] aliases() {
-        return new String[]{"fun","sentence","fungen"};
+        return new String[]{"sue"};
     }
 
     @Override
     public String usage() {
-        return null;
+        return "!sue @MentionTag";
     }
 
     @Override
     public boolean emptyHelp() {
-        return false;
+        return true;
     }
 
     @Override
     public String description() {
-        return "generate a funny sentence";
+        return "sue someone";
     }
 
     @Override

@@ -19,6 +19,7 @@ package io.github.cyborgnoodle;
 import com.google.gson.Gson;
 import io.github.cyborgnoodle.levels.LevelRegistry;
 import io.github.cyborgnoodle.misc.WordStatsData;
+import io.github.cyborgnoodle.misc.funtance.DataCollection;
 import io.github.cyborgnoodle.news.InstagramRegistry;
 import io.github.cyborgnoodle.news.RedditData;
 
@@ -57,6 +58,11 @@ public class SaveManager {
 
         String wordjson = gson.toJson(noodle.getWordStats().getData());
         write(getConfigFile(ConfigFile.WORDS),wordjson);
+
+        DataCollection dc = new DataCollection();
+        dc.pull();
+        String dcjson = gson.toJson(dc);
+        write(getConfigFile(ConfigFile.FUNTANCE),dcjson);
 
 
     }
@@ -100,6 +106,18 @@ public class SaveManager {
             noodle.getWordStats().setData(new WordStatsData());
         }
 
+        DataCollection collection;
+        String sgcont = read(getConfigFile(ConfigFile.FUNTANCE));
+        if(!sgcont.isEmpty()) {
+            collection = gson.fromJson(sgcont,DataCollection.class);
+        }
+        else {
+            collection = new DataCollection();
+            collection.pull();
+        }
+
+        collection.push();
+
 
     }
 
@@ -120,6 +138,9 @@ public class SaveManager {
                 break;
             case WORDS:
                 f = "words.json";
+                break;
+            case FUNTANCE:
+                f = "sentencegen.json";
                 break;
             default:
                 throw new NullPointerException("ConfigFile type can not be null or of other type!");
@@ -183,7 +204,7 @@ public class SaveManager {
     }
 
     public enum ConfigFile{
-        GENERAL, LEVELS, REDDIT, WORDS
+        GENERAL, LEVELS, REDDIT, WORDS, FUNTANCE
     }
 
 }

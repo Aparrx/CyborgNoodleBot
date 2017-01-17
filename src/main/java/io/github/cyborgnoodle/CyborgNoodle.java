@@ -26,18 +26,16 @@ import io.github.cyborgnoodle.chatbot.ChatBot;
 import io.github.cyborgnoodle.chatcli.ChatCommands;
 import io.github.cyborgnoodle.chatcli.Permission;
 import io.github.cyborgnoodle.chatcli.commands.*;
-import io.github.cyborgnoodle.chatcli.commands.meme.FunCommand;
-import io.github.cyborgnoodle.chatcli.commands.meme.FuxkitCommand;
-import io.github.cyborgnoodle.chatcli.commands.meme.TeaCommand;
+import io.github.cyborgnoodle.chatcli.commands.funtance.FunAddCommand;
+import io.github.cyborgnoodle.chatcli.commands.funtance.FunCommand;
+import io.github.cyborgnoodle.chatcli.commands.funtance.FunRemoveCommand;
+import io.github.cyborgnoodle.chatcli.commands.meme.*;
 import io.github.cyborgnoodle.chatcli.commands.poll.PollCommand;
 import io.github.cyborgnoodle.chatcli.commands.poll.ResultCommand;
 import io.github.cyborgnoodle.chatcli.commands.poll.VoteCommand;
 import io.github.cyborgnoodle.chatcli.commands.unit.ConvertCommand;
 import io.github.cyborgnoodle.chatcli.commands.unit.UnitsCommand;
-import io.github.cyborgnoodle.chatcli.words.UserWordsCommand;
-import io.github.cyborgnoodle.chatcli.words.WordCommand;
-import io.github.cyborgnoodle.chatcli.words.WordStatsCommand;
-import io.github.cyborgnoodle.chatcli.words.WordsCommand;
+import io.github.cyborgnoodle.chatcli.words.*;
 import io.github.cyborgnoodle.cli.CommandLine;
 import io.github.cyborgnoodle.cli.CommandLineRunnable;
 import io.github.cyborgnoodle.cli.Commands;
@@ -356,6 +354,12 @@ public class CyborgNoodle {
         io.github.cyborgnoodle.chatcli.Commands.register(new UserWordsCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new HelpCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new ResultCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new ChoreCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new ExceptionsCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new SueCommand(this));
+
+        io.github.cyborgnoodle.chatcli.Commands.register(new FunAddCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new FunRemoveCommand(this));
     }
 
     public boolean hasPermission(User user, Permission permission){

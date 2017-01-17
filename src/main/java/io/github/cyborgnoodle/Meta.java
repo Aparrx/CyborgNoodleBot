@@ -34,7 +34,8 @@ public class Meta {
 
         String s = "```\n";
         s = s + "27.3\n" +
-                "- added !sue, !chore and !exceptions";
+                "- added !sue, !chore and !exceptions\n" +
+                "- fixed comma issue, added !funadd and !funremove";
 
         s = s + "\n```";
         return s;

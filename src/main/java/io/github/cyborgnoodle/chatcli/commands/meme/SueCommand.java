@@ -45,9 +45,9 @@ public class SueCommand extends Command {
             return;
         }
 
-        String verb = Random.choose(VerbData.getAll());
-        String objects = Random.choose(ObjectData.getAll());
-        String place = Random.choose(OrtData.getAll());
+        String verb = Random.choose(VerbData.getData());
+        String objects = Random.choose(ObjectData.getData());
+        String place = Random.choose(OrtData.getData());
 
         getChannel().sendMessage(getAuthor().getMentionTag()+" sued "+user.getMentionTag()+" because he / she "+verb+" "+objects+" "+place+"!");
     }

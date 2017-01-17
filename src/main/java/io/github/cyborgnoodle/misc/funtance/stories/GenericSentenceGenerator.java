@@ -26,20 +26,20 @@ public class GenericSentenceGenerator {
 
     public static String create(){
 
-        String person = Random.choose(PersonenData.getAll());
-        String does = Random.choose(VerbData.getAll());
+        String person = Random.choose(PersonenData.getData());
+        String does = Random.choose(VerbData.getData());
 
         String object;
         if(Random.choose()){
-            object = Random.choose(ObjectData.getAll());
+            object = Random.choose(ObjectData.getData());
         }
         else {
-            object = Random.choose(PersonenData.getAll(),person);
+            object = Random.choose(PersonenData.getData(),person);
         }
 
-        String umstand = Random.choose(UmstandData.getAll());
+        String umstand = Random.choose(UmstandData.getData());
 
-        String place = Random.choose(OrtData.getAll());
+        String place = Random.choose(OrtData.getData());
 
         if(Random.choose()){
             return person+" "+does+" "+object+" "+umstand+" "+place+".";

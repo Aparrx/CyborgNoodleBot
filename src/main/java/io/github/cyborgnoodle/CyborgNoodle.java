@@ -360,6 +360,8 @@ public class CyborgNoodle {
 
         io.github.cyborgnoodle.chatcli.Commands.register(new FunAddCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new FunRemoveCommand(this));
+
+        io.github.cyborgnoodle.chatcli.Commands.register(new QuoteCommand(this));
     }
 
     public boolean hasPermission(User user, Permission permission){

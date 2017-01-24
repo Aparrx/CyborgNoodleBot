@@ -28,6 +28,8 @@ import io.github.cyborgnoodle.msg.Messages;
 import io.github.cyborgnoodle.msg.SystemMessages;
 import io.github.cyborgnoodle.server.ServerRole;
 import io.github.cyborgnoodle.server.ServerUser;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,10 +52,10 @@ public class Levels {
 
     RankCalculator calculator;
 
-    private static int MIN_MSG_XP = 25;
-    private static int MAX_MSG_XP = 250;
-    private static int MIN_BOMB_XP = 300;
-    private static int MAX_BOMB_XP = 5200;
+    public static int MIN_MSG_XP = 25;
+    public static int MAX_MSG_XP = 85;
+    public static int MIN_BOMB_XP = 300;
+    public static int MAX_BOMB_XP = 5200;
 
     public Levels(CyborgNoodle noods){
         this.noodle = noods;

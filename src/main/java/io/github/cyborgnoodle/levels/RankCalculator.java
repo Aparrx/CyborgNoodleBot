@@ -40,6 +40,10 @@ public class RankCalculator {
         roles.put(19,ServerRole.RANK_TRUCKDRIVER);
         roles.put(26,ServerRole.RANK_WINDMILLINSPECTOR);
         roles.put(35,ServerRole.RANK_CEO);
+        roles.put(65,ServerRole.RANK_GRAV_SOUND_CHECK);
+        roles.put(78,ServerRole.RANK_STARSHINE);
+        roles.put(91,ServerRole.RANK_LAST_SOUL);
+        roles.put(100,ServerRole.RANK_GHOST_TRAIN);
 
     }
 

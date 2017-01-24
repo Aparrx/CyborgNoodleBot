@@ -63,6 +63,8 @@ public class HelpCommand extends Command {
 
         desc = desc + "\n";
 
+        if(cmd.detailusage()!=null) desc = desc + "**Details:** "+cmd.detailusage()+"\n";
+
         desc = desc + "**Aliases: **"+ StringUtils.toCommaList(cmd.aliases());
 
         desc = desc + "\n";

@@ -58,6 +58,7 @@ public class Commands {
             Command command = commands.get(cmd);
 
             if(command!=null){
+
                 try {
                     command.execute(message,args);
                 } catch (Exception e) {

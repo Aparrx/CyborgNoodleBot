@@ -41,9 +41,8 @@ public class Random {
 
         // nextInt is normally exclusive of the top value,
         // so add 1 to make it inclusive
-        int randomNum = rand.nextInt((max - min) + 1) + min;
 
-        return randomNum;
+        return rand.nextInt((max - min) + 1) + min;
     }
 
     public static Boolean choose(){
@@ -57,6 +56,11 @@ public class Random {
     public static <T> T choose(Collection<T> l, T... objss){
 
         List<T> objs = Arrays.asList(objss);
+
+        return choose(l,objs);
+    }
+
+    public static <T> T choose(Collection<T> l, Collection<T> objs){
 
         int counter = 0;
 
@@ -74,6 +78,15 @@ public class Random {
             }
 
         }
+    }
+
+    public static <T> Collection<T> chooseMore(Collection<T> l, int amount, T... objss){
+        List<T> list = new ArrayList<>();
+        while(amount>0){
+            T chosed = choose(l, list);
+            list.add(chosed);
+        }
+        return list;
     }
 
 }

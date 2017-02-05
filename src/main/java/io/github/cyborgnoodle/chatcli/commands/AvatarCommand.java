@@ -20,6 +20,8 @@ import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.chatcli.Command;
+import io.github.cyborgnoodle.chatcli.Permission;
+import io.github.cyborgnoodle.server.ServerRole;
 
 /**
  * Created by arthur on 16.01.17.
@@ -66,5 +68,10 @@ public class AvatarCommand extends Command {
     @Override
     public String description() {
         return "show the avatar of a user";
+    }
+
+    @Override
+    public Permission fullPermission() {
+        return new Permission(ServerRole.STAFF);
     }
 }

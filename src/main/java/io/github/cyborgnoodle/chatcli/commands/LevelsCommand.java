@@ -19,6 +19,7 @@ package io.github.cyborgnoodle.chatcli.commands;
 import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
+import io.github.cyborgnoodle.levels.TempUser;
 import io.github.cyborgnoodle.util.StringUtils;
 import io.github.cyborgnoodle.util.table.CodeTable;
 
@@ -53,22 +54,19 @@ public class LevelsCommand extends Command {
         table.addRow("","","","");
 
         for(String uid : getNoodle().getLevels().getLeaderboard().keySet()){
-            Long xp = getNoodle().getLevels().getLeaderboard().get(uid);
 
+            TempUser tu = getNoodle().getLevels().getLeaderboard().get(uid);
+
+            Long xp = tu.getXp();
             String sxp = deciformat.format(xp);
-            Integer level = getNoodle().getLevels().getRegistry().getLevel(uid);
+            Integer level = tu.getLevel();
             String ifiller = StringUtils.getWhitespaces(2-Integer.valueOf(i).toString().length());
             String name;
-            try {
-                User user = getNoodle().getAPI().getUserById(uid).get();
-                name = user.getNickname(getNoodle().getServer());
-                if(name==null){
-                    name = user.getName();
-                    if(name==null) name = "UNKNOWN";
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                name = "UNKNOWN";
+            User user = tu.getUser();
+            name = user.getNickname(getNoodle().getServer());
+            if(name==null){
+                name = user.getName();
+                if(name==null) name = "UNKNOWN";
             }
 
             name = StringUtils.removeEmojiAndSymbol(name);
@@ -93,53 +91,6 @@ public class LevelsCommand extends Command {
 
         getChannel().sendMessage(msg);
 
-    }
-
-    private void old(String[] args){
-
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setGroupingSeparator(' ');
-        DecimalFormat deciformat = new DecimalFormat("#,###", symbols);
-
-        int i = 1;
-        String msg = "**Leaderboard**\n```";
-        msg = msg + "    "+new Formatter().format("%-20s%20s%6s","NAME","XP","LEVEL") + "\n";
-        msg = msg + "\n";
-        for(String uid : getNoodle().getLevels().getLeaderboard().keySet()){
-            Long xp = getNoodle().getLevels().getLeaderboard().get(uid);
-
-            String sxp = deciformat.format(xp);
-            Integer level = getNoodle().getLevels().getRegistry().getLevel(uid);
-            String ifiller = StringUtils.getWhitespaces(2-Integer.valueOf(i).toString().length());
-            String name;
-            try {
-                User user = getNoodle().getAPI().getUserById(uid).get();
-                name = user.getNickname(getNoodle().getServer());
-                if(name==null){
-                    name = user.getName();
-                    if(name==null) name = "UNKNOWN";
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                name = "UNKNOWN";
-            }
-
-            name = StringUtils.ellipsize(name,19);
-
-            Formatter formatter = new Formatter();
-
-            msg = msg + "#"+ifiller+i+" "+formatter.format("%-20s%20s%6s",name,sxp,level.toString()) + "\n";
-
-            //msg = msg + "#"+ifiller+i+" "+name+filler+"  -  "+xp+xpfiller+" "+"XP"+"  -  Level "+level+ "\n";
-
-            i++;
-            if(i>20) break;
-        }
-
-        msg = msg + "```";
-
-
-        getChannel().sendMessage(msg);
     }
 
     @Override

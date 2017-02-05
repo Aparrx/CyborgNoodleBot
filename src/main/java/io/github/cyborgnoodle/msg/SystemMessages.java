@@ -171,10 +171,14 @@ public class SystemMessages {
         l.add("Clint Eastwood");
         l.add("DARE");
         l.add("On Melancholy Hill");
-        l.add("Tomorrow comes today");
+        l.add("Tomorrow Comes Today");
         l.add("Rock the House");
         l.add("Stylo");
         l.add("El Mañana");
+        l.add("Halleluja Money");
+        l.add("Demon Days");
+        l.add("Gorillaz");
+        l.add("nothing");
 
         return (String) Random.choose(l);
     }

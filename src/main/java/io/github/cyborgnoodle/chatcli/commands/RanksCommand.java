@@ -18,6 +18,7 @@ package io.github.cyborgnoodle.chatcli.commands;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
+import io.github.cyborgnoodle.levels.RankCalculator;
 import io.github.cyborgnoodle.server.ServerRole;
 import io.github.cyborgnoodle.util.table.CodeTable;
 
@@ -37,7 +38,7 @@ public class RanksCommand extends Command {
 
         String title = "**Available Ranks**";
 
-        ArrayList<Integer> levels = new ArrayList<>(getNoodle().getLevels().getCalculator().getRoles().keySet());
+        ArrayList<Integer> levels = new ArrayList<>(RankCalculator.getRoles().keySet());
         levels.sort((o1, o2) -> {
             int i1 = o1;
             int i2 = o2;
@@ -46,13 +47,13 @@ public class RanksCommand extends Command {
             else return 1;
         });
 
-        CodeTable table = new CodeTable(20,6);
+        CodeTable table = new CodeTable(30,6);
         table.setRightBound(false,true);
         table.addRow("ROLE","LEVEL");
         table.addRow("","");
 
         for(int lvl : levels){
-            ServerRole sr = getNoodle().getLevels().getCalculator().getRoles().get(lvl);
+            ServerRole sr = RankCalculator.getRoles().get(lvl);
             String rname = getNoodle().getRole(sr).getName();
             table.addRow(rname,Integer.valueOf(lvl).toString());
         }

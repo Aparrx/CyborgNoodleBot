@@ -63,7 +63,7 @@ public class Permission {
         boolean lvlperm;
         if(this.level==0) lvlperm = true;
         else {
-            int level = noodle.getLevels().getRegistry().getLevel(user.getId());
+            int level = noodle.getLevels().registry().get(user).getLevel();
             if(level>=this.level) lvlperm = true;
             else lvlperm = false;
         }

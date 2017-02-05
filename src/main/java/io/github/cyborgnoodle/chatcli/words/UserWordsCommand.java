@@ -22,7 +22,14 @@ import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.misc.WordStatsEntry;
 import io.github.cyborgnoodle.util.StringUtils;
+import javafx.util.Pair;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.CategoryChartBuilder;
+import org.knowm.xchart.style.Styler;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,8 +72,7 @@ public class UserWordsCommand extends Command {
         if(name==null) name = user.getName();
         if(name==null) name = "UNKNOWN NAME";
 
-        String msg = "Words for "+name+"```\n";
-        List<String> listentries = new ArrayList<>();
+        List<Pair<String,Long>> listentries = new ArrayList<>();
 
         toplist.entrySet().stream()
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
@@ -76,16 +82,31 @@ public class UserWordsCommand extends Command {
             String count = cl.toString();
             word = StringUtils.ellipsize(word,19);
             String wordspace = StringUtils.getWhitespaces(20-word.length());
-            listentries.add(word+wordspace+count);
+            listentries.add(new Pair<>(word,cl));
         });
 
-        for(String entry : listentries){
-            msg = msg + entry + "\n";
+        List<String> words = new ArrayList<>();
+        List<Long> counts = new ArrayList<>();
+        for(Pair<String,Long> pair : listentries){
+            words.add(pair.getKey());
+            counts.add(pair.getValue());
         }
 
-        msg = msg + "\n```";
+        CategoryChart chart = new CategoryChartBuilder().theme(Styler.ChartTheme.GGPlot2).xAxisTitle("Words").yAxisTitle("Usage count")
+                .height(600).width(1300).build();
 
-        getChannel().sendMessage(msg);
+        chart.addSeries("Words",words,counts);
+
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNE);
+        chart.setTitle("@"+name+"'s top words");
+
+        //to image
+        byte[] data = BitmapEncoder.getBitmapBytes(chart, BitmapEncoder.BitmapFormat.PNG);
+
+        InputStream is = new ByteArrayInputStream(data);
+
+        getChannel().sendFile(is,"png");
+
     }
 
     @Override

@@ -18,9 +18,9 @@ package io.github.cyborgnoodle.news;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.Log;
+import io.github.cyborgnoodle.settings.Settings;
 import io.github.cyborgnoodle.misc.GoogleURLShortening;
 import io.github.cyborgnoodle.server.ServerChannel;
-import io.github.cyborgnoodle.server.ServerRole;
 import me.postaddict.instagramscraper.Instagram;
 import me.postaddict.instagramscraper.exception.InstagramException;
 import me.postaddict.instagramscraper.model.Account;
@@ -28,7 +28,6 @@ import me.postaddict.instagramscraper.model.Media;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.time.Instant;
 import java.util.List;
 
 /**
@@ -36,7 +35,7 @@ import java.util.List;
  */
 public class InstagramNotifier {
 
-    long NOTBEFORE = 1482167152;
+    long NOTBEFORE = 1485435904;
     CyborgNoodle noodle;
     Instagram insta;
 
@@ -182,9 +181,9 @@ public class InstagramNotifier {
 
                                 Log.info("send insta [video] update for "+name);
 
-                                noodle.getChannel(c).sendMessage(msg);
+                                if(Settings.postnewsdiscord()) noodle.getChannel(c).sendMessage(msg);
 
-                                if(noodle.getReddit().isConnected()){
+                                if(Settings.postnewsreddit() && noodle.getReddit().isConnected()){
                                     noodle.
                                             getReddit().
                                             postNews(media.videoStandardResolutionUrl,originalcaption,media.createdTime*1000,name,media.link,"https://instagram.com/"+name+"/");

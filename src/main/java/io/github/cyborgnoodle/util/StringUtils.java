@@ -17,6 +17,7 @@
 package io.github.cyborgnoodle.util;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,6 +104,24 @@ public class StringUtils {
         } else {
             return "";
         }
+
+    }
+
+    public static boolean isNumeric(String str)
+    {
+        return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+    }
+
+    public static String asReadableTime(long millis){
+
+        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        return days + " Days " + hours + " Hours " + minutes + " Minutes " + seconds + " Seconds";
 
     }
 }

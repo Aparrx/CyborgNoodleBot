@@ -21,6 +21,15 @@ import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
 import io.github.cyborgnoodle.server.ServerRole;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.CategoryChartBuilder;
+import org.knowm.xchart.style.Styler;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by arthur on 16.01.17.
@@ -32,7 +41,7 @@ public class WordsCommand extends Command {
     }
 
     @Override
-    public void onCommand(String[] args) {
+    public void onCommand(String[] args) throws Exception{
 
         int max;
         if(args.length==1){
@@ -49,7 +58,8 @@ public class WordsCommand extends Command {
                         max = num;
                     } else{
                         if(getNoodle().hasPermission(getAuthor(),new Permission(ServerRole.STAFF))){
-                            max = num;
+                            if(num<200) max = num;
+                            else max = 200;
                         }
                         else {
                             Log.warn("entered too big number: "+num);
@@ -67,20 +77,32 @@ public class WordsCommand extends Command {
         else max = 20;
 
         int i = 1;
-        String msg = "*Most used words:*\n";
+        String msg = "*Most used words:*";
+
+        List<String> words = new ArrayList<>();
+        List<Long> counts = new ArrayList<>();
         for(String word : getNoodle().getWordStats().getWordBoard().keySet()){
             long num = getNoodle().getWordStats().getWordBoard().get(word);
-            msg = msg + ""+word+" - "+num+"x\n";
-            if(msg.length()>1800){
-                Log.info("Word Printer: reached msg limit, starting new...");
-                getChannel().sendMessage(msg);
-                msg = "";
-            }
+            words.add(word);
+            counts.add(num);
             i++;
             if(i>max) break;
         }
 
-        getChannel().sendMessage(msg);
+        CategoryChart chart = new CategoryChartBuilder().theme(Styler.ChartTheme.GGPlot2).xAxisTitle("Words").yAxisTitle("Usage count")
+                .height(500).width(1500).build();
+
+        chart.addSeries("Words",words,counts);
+
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNE);
+
+
+        //to image
+        byte[] data = BitmapEncoder.getBitmapBytes(chart, BitmapEncoder.BitmapFormat.PNG);
+
+        InputStream is = new ByteArrayInputStream(data);
+
+        getChannel().sendFile(is,"png");
     }
 
     @Override

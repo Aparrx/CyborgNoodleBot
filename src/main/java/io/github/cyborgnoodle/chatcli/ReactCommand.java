@@ -14,42 +14,58 @@
  * limitations under the License.
  */
 
-package io.github.cyborgnoodle.chatcli.commands;
+package io.github.cyborgnoodle.chatcli;
 
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.chatcli.Command;
+import io.github.cyborgnoodle.misc.ReactionWords;
+import io.github.cyborgnoodle.misc.quotes.Quote;
+import io.github.cyborgnoodle.server.ServerRole;
 
 /**
- * Created by arthur on 16.01.17.
+ * Created by arthur on 30.01.17.
  */
-public class StatsCommand extends Command {
+public class ReactCommand extends Command {
 
-    public StatsCommand(CyborgNoodle noodle) {
+    public ReactCommand(CyborgNoodle noodle) {
         super(noodle);
     }
 
     @Override
-    public void onCommand(String[] args) {
-        getChannel().sendMessage("**Total Message count: **"+getNoodle().getLevels().getRegistry().getMsgs());
+    public void onCommand(String[] args) throws Exception {
+        String name = args[0];
+
+        Quote quote = ReactionWords.get(getNoodle(), name);
+
+        if(quote!=null){
+            getChannel().sendMessage(getAuthor().getMentionTag()+":",quote.toEmbed());
+
+        } else getChannel().sendMessage("Unknown name!");
+
+        getMessage().delete();
     }
 
     @Override
     public String[] aliases() {
-        return new String[]{"stats","statistics"};
+        return new String[]{"react","r"};
     }
 
     @Override
     public String usage() {
-        return null;
+        return "!react <name>";
     }
 
     @Override
     public boolean emptyHelp() {
-        return false;
+        return true;
     }
 
     @Override
     public String description() {
-        return "show server statistics";
+        return "react by name";
+    }
+
+    @Override
+    public Permission fullPermission() {
+        return new Permission(ServerRole.STAFF);
     }
 }

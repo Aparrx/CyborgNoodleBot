@@ -72,6 +72,8 @@ public class WordStats {
             if(lwo.length()>30) continue;
             if(Arrays.asList(EXCEPT).contains(lwo)) continue;
             if(lwo.contains("!")) continue;
+            if(lwo.contains("<#")) continue;
+            if(lwo.contains("<@")) continue;
 
             Long num = counts.get(lwo);
             if(num==null) counts.put(lwo,1L);
@@ -121,7 +123,9 @@ public class WordStats {
             HashMap<String,Long> map = new HashMap<>(data.getMap());
             for(String word : map.keySet()){
                 String cword = BadWords.adjustMsg(word);
-                if(Arrays.asList(EXCEPT).contains(cword)){
+                if(Arrays.asList(EXCEPT).contains(cword) ||
+                        cword.contains("<#") ||
+                        cword.contains("<@")){
                     Log.info(" > removing "+word+" ("+map.get(word)+"x)");
                     data.remove(word);
                 }

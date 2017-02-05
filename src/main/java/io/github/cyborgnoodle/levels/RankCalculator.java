@@ -25,14 +25,14 @@ import java.util.HashMap;
  */
 public class RankCalculator {
 
-    HashMap<Integer,ServerRole> roles;
+    private static HashMap<Integer,ServerRole> roles;
 
-    public RankCalculator(){
+    static {
         roles = new HashMap<>();
         create();
     }
 
-    private void create(){
+    private static void create(){
 
         roles.put(3,ServerRole.RANK_JANITOR);
         roles.put(7,ServerRole.RANK_LIFEBOATGUY);
@@ -47,7 +47,7 @@ public class RankCalculator {
 
     }
 
-    public ServerRole getRoleforLevel(int lvl){
+    public static ServerRole getRoleforLevel(int lvl){
 
         ServerRole role = null;
         while(lvl>0){
@@ -62,7 +62,7 @@ public class RankCalculator {
         else return role;
     }
 
-    public HashMap<Integer, ServerRole> getRoles() {
+    public static HashMap<Integer, ServerRole> getRoles() {
         return roles;
     }
 }

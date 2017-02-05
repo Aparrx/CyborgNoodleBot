@@ -27,16 +27,14 @@ import java.awt.*;
 public class Meta {
 
     public static String getVersion(){
-        return "27.4-1";
+        return "27.6-8";
     }
 
     public static String getChangelog(){
 
         String s = "```\n";
-        s = s + "27.3-1" +
-                "- 1st out of 3 updates to the xp / leveling system\n" +
-                "- changed max message xp from 250 to 85\n" +
-                "- added new rank roles (see !ranks)";
+        s = s + "27.6-8\n" +
+                "- !fixed reddit link for cynoods";
 
         s = s + "\n```";
         return s;

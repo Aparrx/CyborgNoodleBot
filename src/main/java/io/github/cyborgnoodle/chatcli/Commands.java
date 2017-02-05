@@ -40,6 +40,10 @@ public class Commands {
     }
 
     public static void execute(Message message){
+        execute(message,false);
+    }
+
+    public static void execute(Message message, boolean testmode){
 
         String content = message.getContent();
 
@@ -58,6 +62,9 @@ public class Commands {
             Command command = commands.get(cmd);
 
             if(command!=null){
+
+                if(testmode) message.getChannelReceiver().sendMessage(
+                        "**======**\n**WARNING:** Bot is in test mode, commands will not work as expected or will show wrong data!\n**======**");
 
                 try {
                     command.execute(message,args);

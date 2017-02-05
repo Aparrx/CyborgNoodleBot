@@ -16,14 +16,18 @@
 
 package io.github.cyborgnoodle.chatcli.commands;
 
+import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.permissions.Role;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.Log;
+import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
 import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.util.JCUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -41,125 +45,109 @@ public class MakeMeCommand extends Command {
     @Override
     public void onCommand(String[] args) throws Exception{
 
-        if(args.length==1 || args.length==2){
-            String rs = args[0];
+        String ch = args[0];
 
-            User user;
+        Collection<String> good = Arrays.asList("an amazing","an impressive","a wonderful","a beautiful","a godlike","a muscular","a delicious","a sexy");
+        Collection<String> bad = Arrays.asList("a green","an alcoholic","a stinking","an ugly","a gay");
 
-            if(args.length==2){
+        Collection<String> making = Arrays.asList("transforming you into","making you","changing you into");
 
-                if(!getNoodle().hasPermission(getAuthor(),new Permission(ServerRole.STAFF))){
-                    getChannel().sendMessage("You are not allowed to set other peoples character! "+getAuthor().getMentionTag());
-                    return;
-                }
+        boolean nothing = false;
+        ServerRole sr;
+        String rname;
+        switch (ch.toLowerCase()){
+            case "noodle":
+                sr = ServerRole.CHAR_NOODLE;
+                rname = Random.choose(good)+" Noodle";
+                break;
+            case "2d":
+                sr = ServerRole.CHAR_2D;
+                rname = Random.choose(good)+" 2D";
+                break;
+            case "russel":
+                sr = ServerRole.CHAR_RUSSEL;
+                rname = Random.choose(good)+" Russel";
+                break;
+            case "murdoc":
+                sr = ServerRole.CHAR_MURDOC;
+                rname = Random.choose(bad)+" Murdoc";
+                break;
+            case "nothing":
+                sr = null;
+                rname = "NOTHING"; //should never
+                nothing = true;
+                break;
+            default:
+                showInvalidArguments();
+                return;
+        }
 
-                String usrstr = args[1];
+        User user = getAuthor();
 
-                User u = null;
-                for(User usr : getNoodle().getAPI().getUsers()){
-                    if(usr.getMentionTag().equalsIgnoreCase(usrstr)){
-                        u = usr;
-                        break;
-                    }
-                }
+        if(args.length>=2){
 
-                if(u==null){
-                    getChannel().sendMessage("I never heard of \""+usrstr+"\". "+getAuthor().getMentionTag());
-                    return;
-                }
-                else user = u;
-            }
-            else{
+            String mention = args[1];
 
-                if(getNoodle().getLevels().getRegistry().getLevel(getAuthor().getId())<16){
-                    getChannel().sendMessage("Sorry you need at least **Level 16** to change your own character! "+getAuthor().getMentionTag());
-                    return;
-                }
-
-
-                user = getAuthor();
-            }
-
-            if(getNoodle().getRole(ServerRole.GORILLAZ).getUsers().contains(user)){
-                getChannel().sendMessage("You have an **Official Character Role**. You cant change your character! "+user.getMentionTag());
+            if(!new Permission(ServerRole.STAFF).has(getNoodle(),getAuthor())){
+                getChannel().sendMessage("You are not allowed to change other peoples character!");
+                showInvalidArguments();
                 return;
             }
 
+            User other = JCUtil.getUserByMention(getNoodle().getAPI(), mention);
 
-
-            Boolean murdoc = rs.equalsIgnoreCase("murdoc");
-            Boolean russel = rs.equalsIgnoreCase("russel");
-            Boolean noods = rs.equalsIgnoreCase("noodle");
-            Boolean twod = rs.equalsIgnoreCase("2d");
-            Boolean nothing = rs.equalsIgnoreCase("nothing");
-
-            if(murdoc || russel || noods || twod || nothing){
-                Role[] toremove = new Role[]{
-                        getNoodle().getRole(ServerRole.MURDOC),
-                        getNoodle().getRole(ServerRole.RUSSEL),
-                        getNoodle().getRole(ServerRole.NOODLE),
-                        getNoodle().getRole(ServerRole.TWOD)
-                };
-                List<Role> trmv = Arrays.asList(toremove);
-                Collection<Role> rls = user.getRoles(getNoodle().getServer());
-                rls.removeAll(trmv);
-                try {
-                    getNoodle().getServer().updateRoles(user, rls.toArray(new Role[rls.size()])).get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                    throw e;
-                }
-
-                ServerRole role = null;
-                String repl = "";
-                if(murdoc){
-                    role = ServerRole.MURDOC;
-                    repl = "You are a real Murdoc now "+user.getMentionTag()+"!";
-                }
-                if(russel){
-                    role = ServerRole.RUSSEL;
-                    repl = "Big Russel "+user.getMentionTag()+"!";
-                }
-                if(noods){
-                    role = ServerRole.NOODLE;
-                    repl = "Now you are a real Noodle ... *and I'll never never be like that* "+user.getMentionTag()+"!";
-                }
-                if(twod){
-                    role = ServerRole.TWOD;
-                    repl = "Now you are a 2D *and have this eye fracture* "+user.getMentionTag()+"!";
-                }
-                if(rs.equalsIgnoreCase("nothing")){
-                    getChannel().sendMessage("Aaand you are nothing again "+user.getMentionTag()+".");
-                    Log.info("Changed character role of "+user.getName()+" to nothing.");
-                    return;
-                }
-
-                try {
-                    getNoodle().getRole(role).addUser(user).get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                    throw e;
-                }
-                getChannel().sendMessage(repl);
-                Log.info("Changed character role of "+user.getName()+" to "+role.name());
-
+            if(other==null){
+                getChannel().sendMessage("User not found!");
+                showInvalidArguments();
+                return;
             }
-            else getChannel().sendMessage("You have to tell me who you want to be: 2D, Murdoc, Russel, Noodle or Nothing! "+getAuthor().getMentionTag());
+
+            user = other;
 
         }
-        else getChannel().sendMessage("You have to tell me who you want to be: 2D, Murdoc, Russel, Noodle or Nothing! "+getAuthor().getMentionTag());
 
+        Server server = getChannel().getServer();
+
+        Collection<Role> current = user.getRoles(server);
+
+        current.removeAll(Arrays.asList(ServerRole.resolveAll(getNoodle(),ServerRole.getCharacters())));
+
+        if(nothing){
+            getChannel().sendMessage(Random.choose(making)+" nothing...");
+            try {
+                server.updateRoles(user,current.toArray(new Role[current.size()])).get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                getChannel().sendMessage("Oh no, something went wrong! D:");
+                return;
+            }
+            return;
+        }
+
+        current.add(getNoodle().getRole(sr));
+
+        getChannel().sendMessage(Random.choose(making)+" "+rname+"...");
+
+        try {
+            server.updateRoles(user,current.toArray(new Role[current.size()])).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            getChannel().sendMessage("Oh no, something went wrong! D:");
+            return;
+        }
+
+        getChannel().sendMessage("Success!");
 
     }
 
     @Override
     public String[] aliases() {
-        return new String[]{"makeme"};
+        return new String[]{"makeme","make","char","character","c","mm"};
     }
 
     @Override
     public String usage() {
-        return "!makeme <character> [@SomeoneElse]";
+        return "!makeme <noodle | 2d | russel | murdoc | nothing> [@SomeoneElse]";
     }
 
     @Override
@@ -170,5 +158,10 @@ public class MakeMeCommand extends Command {
     @Override
     public String description() {
         return "change your character role";
+    }
+
+    @Override
+    public Permission fullPermission() {
+        return new Permission(35);
     }
 }

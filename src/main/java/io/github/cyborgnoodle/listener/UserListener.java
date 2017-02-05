@@ -27,6 +27,8 @@ import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.msg.SystemMessages;
 import io.github.cyborgnoodle.server.ServerChannel;
+import io.github.cyborgnoodle.settings.Setting;
+import io.github.cyborgnoodle.settings.Settings;
 
 import java.text.MessageFormat;
 
@@ -44,19 +46,19 @@ public class UserListener implements ServerMemberBanListener, ServerMemberUnbanL
     @Override
     public void onServerMemberAdd(DiscordAPI discordAPI, User user, Server server) {
         Log.info(" NEW USER > "+user.getName());
-        noodle.getChannel(ServerChannel.GENERAL).sendMessage(MessageFormat.format(SystemMessages.getWelcome(),user.getName()));
+        if(Settings.comment_newuser()) noodle.getChannel(ServerChannel.GENERAL).sendMessage(MessageFormat.format(SystemMessages.getWelcome(),user.getName()));
     }
 
     @Override
     public void onServerMemberBan(DiscordAPI discordAPI, User user, Server server) {
         Log.info(" BANNED USER > "+user.getName());
-        noodle.getChannel(ServerChannel.GENERAL).sendMessage(MessageFormat.format(SystemMessages.getBanned(),user.getName()));
+        if(Settings.comment_banuser()) noodle.getChannel(ServerChannel.GENERAL).sendMessage(MessageFormat.format(SystemMessages.getBanned(),user.getName()));
     }
 
     @Override
     public void onServerMemberRemove(DiscordAPI discordAPI, User user, Server server) {
         Log.info(" REMOVED USER > "+user.getName());
-        noodle.getChannel(ServerChannel.GENERAL).sendMessage(MessageFormat.format(SystemMessages.getLeave(),user.getName()));
+        if(Settings.comment_leaveuser()) noodle.getChannel(ServerChannel.GENERAL).sendMessage(MessageFormat.format(SystemMessages.getLeave(),user.getName()));
     }
 
     @Override

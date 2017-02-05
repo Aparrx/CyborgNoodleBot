@@ -22,6 +22,7 @@ import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.levels.LevelConverser;
+import io.github.cyborgnoodle.levels.RankCalculator;
 import io.github.cyborgnoodle.msg.SystemMessages;
 import io.github.cyborgnoodle.news.Reddit;
 import io.github.cyborgnoodle.news.RedditPost;
@@ -94,7 +95,7 @@ public class Commands {
         }
 
         if(cmd.equals("bounty")){
-            Log.info((noodle.getLevels().getRegistry().getNextBounty()-System.currentTimeMillis())+" ms left till next bounty.\n");
+            Log.info((noodle.getLevels().registry().getNextBounty()-System.currentTimeMillis())+" ms left till next bounty.\n");
         }
 
         if(cmd.equals("redditlogout")){
@@ -143,7 +144,7 @@ public class Commands {
 
             String msg = cmd.replace("getrole ","");
             Integer i = Integer.valueOf(msg);
-            ServerRole role = noodle.getLevels().getCalculator().getRoleforLevel(i);
+            ServerRole role = RankCalculator.getRoleforLevel(i);
             Server srv = noodle.getAPI().getServerById("229000154936639488");
             Log.info("Role you get for Level "+i+": "+srv.getRoleById(role.getID()).getName());
         }
@@ -203,8 +204,8 @@ public class Commands {
                 }
             }
 
-            long xptotal = noodle.getLevels().getRegistry().getXP(u.getId());
-            int level = noodle.getLevels().getRegistry().getLevel(u.getId());
+            long xptotal = noodle.getLevels().registry().get(u).getXp();
+            int level = noodle.getLevels().registry().get(u).getLevel();
 
             Log.info("Total XP: "+xptotal);
             Log.info("Level: "+level);
@@ -242,8 +243,9 @@ public class Commands {
 
             if(u==null) Log.error("User not found: ");
             else{
-                noodle.getLevels().getRegistry().setXP(u.getId(),xpi);
-                noodle.getLevels().getRegistry().setLevel(u.getId(),lvli);
+                //noodle.getLevels().getRegistry().setXP(u.getId(),xpi);
+                //noodle.getLevels().getRegistry().setLevel(u.getId(),lvli);
+                Log.warn("Will not work. This was disabled!!!"); // added warning
                 Log.info("Set xp of "+u.getId()+" to "+xpi);
             }
         }

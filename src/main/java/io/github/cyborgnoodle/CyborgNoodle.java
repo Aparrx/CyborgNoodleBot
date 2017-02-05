@@ -23,12 +23,13 @@ import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.permissions.Role;
 import io.github.cyborgnoodle.chatbot.ChatBot;
-import io.github.cyborgnoodle.chatcli.ChatCommands;
-import io.github.cyborgnoodle.chatcli.Permission;
+import io.github.cyborgnoodle.chatcli.*;
 import io.github.cyborgnoodle.chatcli.commands.*;
 import io.github.cyborgnoodle.chatcli.commands.funtance.FunAddCommand;
 import io.github.cyborgnoodle.chatcli.commands.funtance.FunCommand;
 import io.github.cyborgnoodle.chatcli.commands.funtance.FunRemoveCommand;
+import io.github.cyborgnoodle.chatcli.commands.levels.AddXPCommand;
+import io.github.cyborgnoodle.chatcli.commands.levels.RemXPCommand;
 import io.github.cyborgnoodle.chatcli.commands.meme.*;
 import io.github.cyborgnoodle.chatcli.commands.poll.PollCommand;
 import io.github.cyborgnoodle.chatcli.commands.poll.ResultCommand;
@@ -51,6 +52,7 @@ import io.github.cyborgnoodle.news.Reddit;
 import io.github.cyborgnoodle.server.ServerChannel;
 import io.github.cyborgnoodle.server.ServerRole;
 import io.github.cyborgnoodle.server.ServerUser;
+import io.github.cyborgnoodle.statistics.Statistics;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,6 +88,7 @@ public class CyborgNoodle {
     Waiter redditmsgwt;
     Waiter savewt;
     Waiter wwt;
+    Waiter statswt;
 
     Waiter relogwt;
 
@@ -100,7 +103,7 @@ public class CyborgNoodle {
 
     HashMap<Runnable,Long> later;
 
-    String SERVER = "229000154936639488";
+    String SERVER = "274439447234347010";
 
     public CyborgNoodle(Connection connection){
         this.running = true;
@@ -216,7 +219,7 @@ public class CyborgNoodle {
     }
 
     public void say(String message){
-        Channel channel = api.getChannelById("229000154936639488");
+        Channel channel = this.getChannel(ServerChannel.GENERAL);
         channel.sendMessage(message);
     }
 
@@ -275,7 +278,10 @@ public class CyborgNoodle {
     }
 
     public Role getRole(ServerRole r){
-        return getServer().getRoleById(r.getID());
+        return getServer()
+                .getRoleById(
+                        r
+                                .getID());
     }
 
 
@@ -299,6 +305,9 @@ public class CyborgNoodle {
         });
 
         savewt = new Waiter(1800000,new AutoSaveRunnable(this));
+
+        // 2.5 minutes
+        statswt = new Waiter(150000, () -> Statistics.statsTick(null,null,getServer(),0));
     }
 
     public void runTick() throws Exception{
@@ -309,6 +318,8 @@ public class CyborgNoodle {
         //redditmsgwt.run();
 
         savewt.run();
+
+        statswt.run();
 
         //relogwt.run(); disable because JC has fixed the crash and it causes double logins
         HashSet<Runnable> toremove = new HashSet<>();
@@ -340,7 +351,6 @@ public class CyborgNoodle {
         io.github.cyborgnoodle.chatcli.Commands.register(new WhatCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new RanksCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new FuxkitCommand(this));
-        io.github.cyborgnoodle.chatcli.Commands.register(new StatsCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new WhenCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new ShortCommand(this));
         io.github.cyborgnoodle.chatcli.Commands.register(new VersionCommand(this));
@@ -362,6 +372,18 @@ public class CyborgNoodle {
         io.github.cyborgnoodle.chatcli.Commands.register(new FunRemoveCommand(this));
 
         io.github.cyborgnoodle.chatcli.Commands.register(new QuoteCommand(this));
+
+        io.github.cyborgnoodle.chatcli.Commands.register(new Stats2Command(this));
+
+        io.github.cyborgnoodle.chatcli.Commands.register(new AddXPCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new RemXPCommand(this));
+
+        io.github.cyborgnoodle.chatcli.Commands.register(new SettingsCommand(this));
+
+        io.github.cyborgnoodle.chatcli.Commands.register(new ReactCommand(this));
+        io.github.cyborgnoodle.chatcli.Commands.register(new AddReactCommand(this));
+
+        io.github.cyborgnoodle.chatcli.Commands.register(new IncidentCommand(this));
     }
 
     public boolean hasPermission(User user, Permission permission){

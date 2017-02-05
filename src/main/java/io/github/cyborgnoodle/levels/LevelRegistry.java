@@ -32,7 +32,7 @@ public class LevelRegistry implements Serializable{
 
     long msgs;
 
-    volatile long TIMEOUT = 172800000l;
+    public static volatile long TIMEOUT = 172800000l;
 
     public LevelRegistry(){
         registry = new HashMap<String,RegistryUser>();

@@ -17,6 +17,7 @@
 package io.github.cyborgnoodle.util;
 
 import com.vdurmont.emoji.EmojiManager;
+import net.reduls.sanmoku.dic.Char;
 
 /**
  * Created by arthur on 18.01.17.
@@ -32,6 +33,7 @@ public enum NumberEmoji {
     THREE(EmojiManager.getForAlias("three").getUnicode(),3),
     TWO(EmojiManager.getForAlias("two").getUnicode(),2),
     ONE(EmojiManager.getForAlias("one").getUnicode(),1),
+    ZERO(EmojiManager.getForAlias("zero").getUnicode(),0);
     ;
 
     private String emoji;
@@ -48,5 +50,65 @@ public enum NumberEmoji {
 
     public int getNumber() {
         return num;
+    }
+
+    public static NumberEmoji forNumber(int i){
+        for(NumberEmoji e : NumberEmoji.values()){
+            if(e.getNumber()==i) return e;
+        }
+        return null;
+    }
+
+    public static String numsToEmoji(String s){
+
+        String res = "";
+        for(Character c : s.toCharArray()){
+            if(Character.isDigit(c)){
+
+                String moji;
+
+                switch (c.toString()) {
+                    case "1":
+                        moji = ONE.toEmoji();
+                        break;
+                    case "2":
+                        moji = TWO.toEmoji();
+                        break;
+                    case "3":
+                        moji = THREE.toEmoji();
+                        break;
+                    case "4":
+                        moji = FOUR.toEmoji();
+                        break;
+                    case "5":
+                        moji = FIVE.toEmoji();
+                        break;
+                    case "6":
+                        moji = SIX.toEmoji();
+                        break;
+                    case "7":
+                        moji = SEVEN.toEmoji();
+                        break;
+                    case "8":
+                        moji = EIGHT.toEmoji();
+                        break;
+                    case "9":
+                        moji = NINE.toEmoji();
+                        break;
+                    case "0":
+                        moji = ZERO.toEmoji();
+                        break;
+                    default:
+                        moji = c.toString();
+                        break;
+                }
+
+                res = res + moji;
+            }
+            else res = res + Character.valueOf(c).toString();
+        }
+
+        return res;
+
     }
 }

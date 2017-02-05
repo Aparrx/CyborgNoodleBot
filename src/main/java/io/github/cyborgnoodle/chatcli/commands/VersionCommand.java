@@ -31,7 +31,8 @@ public class VersionCommand extends Command {
 
     @Override
     public void onCommand(String[] args) {
-        getChannel().sendMessage("**"+ Meta.getVersion()+"** Changelog:\n"+Meta.getChangelog(),Meta.getEmbed());
+        if(args.length==1) getChannel().sendMessage("**"+ Meta.getVersion()+"** Changelog:\n"+Meta.getChangelog());
+        else getChannel().sendMessage("**"+ Meta.getVersion()+"** Changelog:\n"+Meta.getChangelog(),Meta.getEmbed());
     }
 
     @Override

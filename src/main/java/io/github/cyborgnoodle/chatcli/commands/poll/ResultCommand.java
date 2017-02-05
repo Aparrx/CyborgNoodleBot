@@ -21,6 +21,13 @@ import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
 import io.github.cyborgnoodle.server.ServerRole;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.PieChart;
+import org.knowm.xchart.PieChartBuilder;
+import org.knowm.xchart.style.Styler;
+
+import java.io.ByteArrayInputStream;
+import java.util.HashMap;
 
 /**
  * Created by arthur on 16.01.17.
@@ -33,8 +40,22 @@ public class ResultCommand extends Command {
 
     @Override
     public void onCommand(String[] args) throws Exception {
+
+        HashMap<String, Integer> votes = getNoodle().getPolls().getVotes();
+
+        PieChart chart = new PieChartBuilder().theme(Styler.ChartTheme.GGPlot2).height(500).width(600)
+                .title(getNoodle().getPolls().getTitle()).build();
+
+        for(String option : votes.keySet()){
+            chart.addSeries(option,votes.get(option));
+        }
+
+        byte[] data = BitmapEncoder.getBitmapBytes(chart, BitmapEncoder.BitmapFormat.PNG);
+
+
         EmbedBuilder em = getNoodle().getPolls().result();
         getChannel().sendMessage("",em);
+        getChannel().sendFile(new ByteArrayInputStream(data),"png");
     }
 
     @Override

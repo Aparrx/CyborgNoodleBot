@@ -57,8 +57,8 @@ public class RankCommand extends Command {
             return;
         }
 
-        long xptotal = getNoodle().getLevels().getRegistry().getXP(user.getId());
-        int level = getNoodle().getLevels().getRegistry().getLevel(user.getId());
+        long xptotal = getNoodle().getLevels().registry().get(user).getXp();
+        int level = getNoodle().getLevels().registry().get(user).getLevel();
 
 
         long xpnext = LevelConverser.getXPforLevel(level+1);
@@ -66,7 +66,7 @@ public class RankCommand extends Command {
         long xpleft = xptotal - xpcurrent;
         long xpfornext = xpnext - xpcurrent;
 
-        long giftleft = getNoodle().getLevels().getRegistry().getGiftStamp(user.getId())-System.currentTimeMillis();
+        long giftleft = getNoodle().getLevels().registry().get(user).getGiftTimeout()-System.currentTimeMillis();
 
         String tilgift;
         if(giftleft>=0){

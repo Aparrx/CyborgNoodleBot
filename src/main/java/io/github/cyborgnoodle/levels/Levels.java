@@ -21,22 +21,13 @@ import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.Random;
-import io.github.cyborgnoodle.misc.DiscordUnits;
-import io.github.cyborgnoodle.misc.UnitConverter;
+import io.github.cyborgnoodle.settings.Settings;
 import io.github.cyborgnoodle.misc.Util;
-import io.github.cyborgnoodle.msg.Messages;
-import io.github.cyborgnoodle.msg.SystemMessages;
+import io.github.cyborgnoodle.server.ServerChannel;
 import io.github.cyborgnoodle.server.ServerRole;
-import io.github.cyborgnoodle.server.ServerUser;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -48,26 +39,22 @@ public class Levels {
 
     private HashMap<String,Long> blocklist;
 
-    LevelRegistry registry;
+    TempRegistry registry;
 
-    RankCalculator calculator;
-
-    public static int MIN_MSG_XP = 25;
-    public static int MAX_MSG_XP = 85;
-    public static int MIN_BOMB_XP = 300;
-    public static int MAX_BOMB_XP = 5200;
+    public static int MIN_MSG_XP_OUT = 25;
+    public static int MAX_MSG_XP_OUT = 85;
+    public static int MIN_BOMB_XP_OUT = 300;
+    public static int MAX_BOMB_XP_OUT = 5200;
 
     public Levels(CyborgNoodle noods){
         this.noodle = noods;
         this.blocklist = new HashMap<>();
-        this.registry = new LevelRegistry();
-        this.calculator = new RankCalculator();
+        this.registry = new TempRegistry(noods);
     }
 
     public synchronized void onMessage(User user){
-        registry.addMsg();
         String uid = user.getId();
-        if(uid!=noodle.getAPI().getYourself().getId()){
+        if(!Objects.equals(uid, noodle.getAPI().getYourself().getId())){
             if(!blocklist.containsKey(uid)){
                 gainXP(user);
                 blockUser(uid);
@@ -78,10 +65,10 @@ public class Levels {
     public synchronized void gainXP(User usr){
         long now = System.currentTimeMillis();
 
-        Boolean ready = registry.getGiftStamp(usr.getId())<now;
+        Boolean ready = registry.get(usr).getGiftTimeout()<now;
 
         if(registry.getNextBounty()>now){
-            int pxp = Random.randInt(MIN_MSG_XP,MAX_MSG_XP);
+            int pxp = Random.randInt(Settings.lvl_msgxp_min(),Settings.lvl_msgxp_max());
             gainXP(usr,pxp);
         }
         else{
@@ -89,16 +76,16 @@ public class Levels {
                 //1hr     //24h
                 long nextbounty = now + Random.randInt(3600000,86400000);
                 registry.setNextBounty(nextbounty);
-                registry.setGiftTimeout(usr.getId());
+                registry.get(usr).setGiftTimeout(LevelRegistry.TIMEOUT);
                 Log.info("Blocked "+usr.getName()+" for 48 hrs from xp gifts.");
                 Log.info("Next random xp gift was set to "+ Util.toTimeFormat(nextbounty-now) + " in the future!");
-                int pxp = Random.randInt(MIN_BOMB_XP,MAX_BOMB_XP);
+                int pxp = Random.randInt(Settings.lvl_bombxp_min(),Settings.lvl_bombxp_max());
 
-                noodle.say(usr.getMentionTag()+" was lucky enough to get a random **XP gift of "+pxp+" XP**!");
+                noodle.getChannel(ServerChannel.GENERAL).sendMessage(usr.getMentionTag()+" was lucky enough to get a random **XP gift of "+pxp+" XP**!");
                 gainXP(usr,pxp);
             }
             else{
-                int pxp = Random.randInt(MIN_MSG_XP,MAX_MSG_XP);
+                int pxp = Random.randInt(Settings.lvl_msgxp_min(),Settings.lvl_msgxp_max());
                 gainXP(usr,pxp);
             }
         }
@@ -106,35 +93,13 @@ public class Levels {
 
     public synchronized void gainXP(User usr, int pxp){
 
-        String uid = usr.getId();
+        registry.get(usr).addXp(pxp);
 
-        long xpbefore = registry.getXP(uid);
-
-        registry.addXP(uid,pxp);
-
-        long xpafter = registry.getXP(uid);
-
-        int lvlbefore = LevelConverser.getLevelforXP(xpbefore);
-        int lvlafter = LevelConverser.getLevelforXP(xpafter);
-
-        ServerRole rolebefore = calculator.getRoleforLevel(lvlbefore);
-        ServerRole roleafter = calculator.getRoleforLevel(lvlafter);
-
-        Log.info(usr.getName()+" gained "+pxp+" XP, "+xpbefore+"B "+xpafter+"A XP, "+lvlbefore+"B "+lvlafter+"A Level ["+uid+"]");
-
-        if(lvlafter>lvlbefore){
-            noodle.say(usr.getMentionTag()+" advanced to **Level "+lvlafter+"**!");
-            registry.setLevel(uid,lvlafter);
-        }
-
-        if(xpbefore<100000 && xpafter>100000){
-            noodle.say("**Congratulations "+usr.getMentionTag()+" you reached 100 000 XP!**");
-        }
-
-        changeRoles(usr,rolebefore,roleafter);
+        //changeRoles(usr,rolebefore,roleafter);
     }
 
-    public void changeRoles(User user, ServerRole before, ServerRole after){
+    @Deprecated
+    public void changeRolesXXXX(User user, ServerRole before, ServerRole after){
 
         if(after==null){
             return;
@@ -149,9 +114,7 @@ public class Levels {
                 try {
                     srv.getRoleById(before.getID()).removeUser(user).get();
                     srv.getRoleById(after.getID()).addUser(user).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
 
@@ -161,28 +124,30 @@ public class Levels {
         }
     }
 
-    public LinkedHashMap<String,Long> getLeaderboard(){
-        HashMap<String,Long> dat = new HashMap<>();
+    public LinkedHashMap<String,TempUser> getLeaderboard(){
+        HashMap<String,TempUser> dat = new HashMap<>();
         for(User user : noodle.getAPI().getUsers()){
-            long xp = registry.getXP(user.getId());
-            int level = registry.getLevel(user.getId());
 
-            if(level>0){
-                dat.put(user.getId(),xp);
+            TempUser t = registry.get(user);
+
+            if(t.getLevel()>0){
+                dat.put(user.getId(),t);
             }
-
-
-
 
         }
 
         return sortByValue(dat);
     }
 
-    public static <String, Long extends Comparable<? super Long>> LinkedHashMap<String, Long> sortByValue(Map<String, Long> map) {
+    public static LinkedHashMap<String, TempUser> sortByValue(Map<String, TempUser> map) {
         return map.entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
+                .sorted((o1, o2) -> {
+                    Long l1 = o1.getValue().getXp();
+                    Long l2 = o2.getValue().getXp();
+
+                    return l2.compareTo(l1);
+                })
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
@@ -216,15 +181,15 @@ public class Levels {
         }
     }
 
-    public LevelRegistry getRegistry(){
+    public LevelRegistry toLevelRegistry(){
+        return registry.toRegistry();
+    }
+
+    public TempRegistry registry(){
         return registry;
     }
 
-    public RankCalculator getCalculator(){
-        return calculator;
-    }
-
     public void setRegistry(LevelRegistry reg){
-        this.registry = reg;
+        this.registry = new TempRegistry(noodle,reg);
     }
 }

@@ -23,17 +23,12 @@ import de.btobastian.javacord.listener.message.MessageCreateListener;
 import de.btobastian.javacord.listener.message.MessageDeleteListener;
 import de.btobastian.javacord.listener.message.MessageEditListener;
 import io.github.cyborgnoodle.CyborgNoodle;
+import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.Random;
+import io.github.cyborgnoodle.settings.Settings;
 import io.github.cyborgnoodle.chatcli.Commands;
 import io.github.cyborgnoodle.misc.AutoConverter;
-import io.github.cyborgnoodle.misc.Util;
-import io.github.cyborgnoodle.msg.ConversationMessages;
-import io.github.cyborgnoodle.msg.SystemMessages;
-import io.github.cyborgnoodle.server.ServerChannel;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import io.github.cyborgnoodle.statistics.Statistics;
 
 /**
  *
@@ -48,28 +43,37 @@ public class MessageListener implements MessageCreateListener, MessageEditListen
 
     public void onMessageCreate(DiscordAPI discordAPI, Message message) {
 
-        if(!message.getAuthor().equals(noodle.getAPI().getYourself())) {
-            if (true) { //workaround original: !noodle.getSpamFilter().isSpam(message)
+        try {
+            if (!message.getAuthor().equals(noodle.getAPI().getYourself())) {
+                if (true) { //workaround original: !noodle.getSpamFilter().isSpam(message)
 
-                if(noodle.getSpamFilter().isTimeout(message.getAuthor())){
-                    message.delete();
-                    return;
-                }
+                    if (noodle.getSpamFilter().isTimeout(message.getAuthor())) {
+                        message.delete();
+                        return;
+                    }
 
-                noodle.getLevels().onMessage(message.getAuthor());
-                Commands.execute(message);
-                //noodle.getBadWords().onMessage(message);
+                    if(Settings.gainxp()) noodle.getLevels().onMessage(message.getAuthor());
 
-                noodle.getWordStats().onMessage(message);
+                    Commands.execute(message, false);
+                    if(Settings.trackstats()) Statistics.onMessage(message);
+                    if(Settings.commentbadwords()) noodle.getBadWords().onMessage(message);
 
-                if(message.getMentions().contains(noodle.getAPI().getYourself())){
-                    message.addUnicodeReaction(Random.choose(EmojiManager.getAll()).getUnicode());
-                }
+                    noodle.getWordStats().onMessage(message);
 
-                if(!message.getContent().startsWith("!")){
-                    AutoConverter.onMsg(message);
+                    if (Settings.addemoji() && message.getMentions().contains(noodle.getAPI().getYourself())) {
+                        message.addUnicodeReaction(Random.choose(EmojiManager.getAll()).getUnicode());
+                    }
+
+                    if (!message.getContent().startsWith("!")) {
+                        if(Settings.autoconverter()) AutoConverter.onMsg(message);
+                    }
                 }
             }
+
+        }
+        catch (Exception e){
+            Log.error("listener error");
+            e.printStackTrace();
         }
 
     }
@@ -83,7 +87,7 @@ public class MessageListener implements MessageCreateListener, MessageEditListen
         int r = Random.randInt(0,50);
 
         if(r==1){
-            message.getChannelReceiver().sendMessage("I saw that edit "+message.getAuthor().getMentionTag());
+            if(Settings.comment_edits()) message.getChannelReceiver().sendMessage("I saw that edit "+message.getAuthor().getMentionTag());
         }
 
     }

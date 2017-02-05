@@ -167,6 +167,14 @@ public class Polls {
         return embed;
     }
 
+    public HashMap<String, Integer> getVotes() {
+        return votes;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
     private List<String> getWinners(){
         List<String> win = new ArrayList<>();
         int maxValueInMap=(Collections.max(votes.values()));  // This will return max value in the Hashmap

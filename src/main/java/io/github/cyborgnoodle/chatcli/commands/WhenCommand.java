@@ -32,7 +32,7 @@ public class WhenCommand extends Command {
     @Override
     public void onCommand(String[] args) {
         getChannel().sendMessage("**Next Gift in:** "+ Util.toTimeFormat(
-                getNoodle().getLevels().getRegistry().getNextBounty()-System.currentTimeMillis()));
+                getNoodle().getLevels().registry().getNextBounty()-System.currentTimeMillis()));
     }
 
     @Override

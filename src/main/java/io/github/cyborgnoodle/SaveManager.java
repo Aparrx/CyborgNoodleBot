@@ -17,11 +17,16 @@
 package io.github.cyborgnoodle;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.github.cyborgnoodle.levels.LevelRegistry;
+import io.github.cyborgnoodle.misc.ReactionWords;
 import io.github.cyborgnoodle.misc.WordStatsData;
 import io.github.cyborgnoodle.misc.funtance.DataCollection;
 import io.github.cyborgnoodle.news.InstagramRegistry;
 import io.github.cyborgnoodle.news.RedditData;
+import io.github.cyborgnoodle.settings.Settings;
+import io.github.cyborgnoodle.statistics.Statistics;
+import io.github.cyborgnoodle.statistics.data.StatisticsData;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -46,9 +51,10 @@ public class SaveManager {
 
         Log.info("saving data...");
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT)
+                .setPrettyPrinting().create();
 
-        String json = gson.toJson(noodle.getLevels().getRegistry());
+        String json = gson.toJson(noodle.getLevels().toLevelRegistry());
         write(getConfigFile(ConfigFile.LEVELS),json);
         String instajson = gson.toJson(noodle.getInstaRegistry());
         write(getConfigFile(ConfigFile.GENERAL),instajson);
@@ -64,6 +70,17 @@ public class SaveManager {
         String dcjson = gson.toJson(dc);
         write(getConfigFile(ConfigFile.FUNTANCE),dcjson);
 
+        StatisticsData statdat = Statistics.save();
+        String stjson = gson.toJson(statdat);
+        write(getConfigFile(ConfigFile.STATS),stjson);
+
+        Settings set = Settings.getSettings();
+        String setson = gson.toJson(set);
+        write(getConfigFile(ConfigFile.SETTINGS),setson);
+
+        ReactionWords words = ReactionWords.getWords();
+        String wjson = gson.toJson(words);
+        write(getConfigFile(ConfigFile.REACTIONS),wjson);
 
     }
 
@@ -71,7 +88,8 @@ public class SaveManager {
 
         Log.info("loading data...");
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT)
+                .setPrettyPrinting().create();
 
         String regcont = read(getConfigFile(ConfigFile.LEVELS));
         if(!regcont.isEmpty()) {
@@ -118,6 +136,26 @@ public class SaveManager {
 
         collection.push();
 
+        String statscont = read(getConfigFile(ConfigFile.STATS));
+        if(!statscont.isEmpty()) {
+            StatisticsData data = gson.fromJson(statscont,StatisticsData.class);
+            Statistics.load(data);
+        }
+        else{
+            Statistics.load(new StatisticsData());
+        }
+
+        String sjson = read(getConfigFile(ConfigFile.SETTINGS));
+        if(!sjson.isEmpty()) {
+            Settings settings = gson.fromJson(sjson, Settings.class);
+            Settings.setSettings(settings);
+        }
+
+        String rjson = read(getConfigFile(ConfigFile.REACTIONS));
+        if(!sjson.isEmpty()) {
+            ReactionWords words = gson.fromJson(rjson, ReactionWords.class);
+            ReactionWords.setWords(words);
+        }
 
     }
 
@@ -141,6 +179,18 @@ public class SaveManager {
                 break;
             case FUNTANCE:
                 f = "sentencegen.json";
+                break;
+            case STATS:
+                f = "statistics.json";
+                break;
+            case SETTINGS:
+                f = "settings.json";
+                break;
+            case AUTH:
+                f = "auth.json";
+                break;
+            case REACTIONS:
+                f = "reactions.json";
                 break;
             default:
                 throw new NullPointerException("ConfigFile type can not be null or of other type!");
@@ -171,7 +221,7 @@ public class SaveManager {
         return new String(encoded, encoding);
     }
 
-    private String read(File f){
+    public String read(File f){
         try {
             if(!f.exists()){
                 f.createNewFile();
@@ -186,7 +236,7 @@ public class SaveManager {
         }
     }
 
-    private void write(File f, String content){
+    public void write(File f, String content){
         try {
             Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), Charset.forName(CHARSET)));
             if(!f.exists()) f.createNewFile();
@@ -204,7 +254,7 @@ public class SaveManager {
     }
 
     public enum ConfigFile{
-        GENERAL, LEVELS, REDDIT, WORDS, FUNTANCE
+        GENERAL, LEVELS, REDDIT, WORDS, FUNTANCE, STATS, SETTINGS, AUTH, REACTIONS
     }
 
 }

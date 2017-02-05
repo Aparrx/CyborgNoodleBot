@@ -23,6 +23,7 @@ import com.mashape.unirest.http.Unirest;
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.ImplDiscordAPI;
 import de.btobastian.javacord.entities.Channel;
+import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.entities.message.impl.ImplMessage;
 import de.btobastian.javacord.utils.ratelimits.RateLimitType;
@@ -52,6 +53,26 @@ public class JCUtil {
                     return (Message) new ImplMessage(msgjson,api,channel);
                 });
         return future;
+    }
+
+    public static Channel getChannelByMention(DiscordAPI api, String ch){
+        Channel channel = null;
+        if(ch.contains("<#")){
+            String chid = ch.replace("<#","").replace(">","");
+            Channel xc = api.getChannelById(chid);
+            if(xc!=null) channel = xc;
+        }
+        return channel;
+    }
+
+    public static User getUserByMention(DiscordAPI api, String ch){
+        User user = null;
+        if(ch.contains("<@")){
+            String chid = ch.replace("<@","").replace(">","");
+            User xc = api.getCachedUserById(chid);
+            if(xc!=null) user = xc;
+        }
+        return user;
     }
 
 }

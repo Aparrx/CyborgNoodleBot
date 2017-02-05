@@ -16,15 +16,20 @@
 
 package io.github.cyborgnoodle.server;
 
+import de.btobastian.javacord.entities.permissions.Role;
+import io.github.cyborgnoodle.CyborgNoodle;
+
+import java.util.ArrayList;
+
 /**
  * Roles on the discord Server
  */
 public enum ServerRole {
 
-    MOD("229000415050465281"),
-    GUARD("229382170542604292"),
+    MOD("274441063463125004"),
+    GUARD("274442072264802304"),
 
-    STAFF("230772632818155520"),
+    STAFF("274444183668916225"),
 
     NOODLE("229018306349236234"),
     RUSSEL("230712812790480896"),
@@ -41,20 +46,26 @@ public enum ServerRole {
 
     NEWS_SUB("244222039207051266"),
 
-    OWNER("246667742168481793"),
+    OWNER("274440138992648195"),
 
-    RANK_JANITOR("231136361640361985"),
-    RANK_LIFEBOATGUY("231136842026582027"),
-    RANK_DAREMECH("231137158570835970"),
-    RANK_TRUCKDRIVER("233625728543883264"),
-    RANK_WINDMILLINSPECTOR("233625934807302145"),
-    RANK_CEO("231756645481316352"),
-    RANK_GRAV_SOUND_CHECK("273371326402658305"),
-    RANK_STARSHINE("273370821928550400"),
-    RANK_LAST_SOUL("273370574477328384"),
-    RANK_GHOST_TRAIN("273369941229568000"),
+    RANK_JANITOR("274442653058465793"),
+    RANK_LIFEBOATGUY("274442601099427851"),
+    RANK_DAREMECH("274442574620524544"),
+    RANK_TRUCKDRIVER("274442536687370240"),
+    RANK_WINDMILLINSPECTOR("274442504349286411"),
+    RANK_CEO("274442457632997376"),
+    RANK_GRAV_SOUND_CHECK("274442418928091137"),
+    RANK_STARSHINE("274442383368650763"),
+    RANK_LAST_SOUL("274442340683481089"),
+    RANK_GHOST_TRAIN("274442249381871617"),
 
-    REGULAR("244222039207051266"),
+    CHAR_NOODLE("276722668005228544"),
+    CHAR_2D("276723007853035522"),
+    CHAR_RUSSEL("276722842442399744"),
+    CHAR_MURDOC("276723101579083776"),
+
+
+    REGULAR("274442728090107905"),
     ;
 
     String id;
@@ -67,4 +78,36 @@ public enum ServerRole {
         return id;
     }
 
+    public static ServerRole[] getRanks(){
+        return new ServerRole[]{
+                RANK_JANITOR,
+                RANK_LIFEBOATGUY,
+                RANK_DAREMECH,
+                RANK_TRUCKDRIVER,
+                RANK_WINDMILLINSPECTOR,
+                RANK_CEO,
+                RANK_GRAV_SOUND_CHECK,
+                RANK_STARSHINE,
+                RANK_LAST_SOUL,
+                RANK_GHOST_TRAIN
+        };
+    }
+
+    public static ServerRole[] getCharacters(){
+        return new ServerRole[]{
+                CHAR_2D,
+                CHAR_MURDOC,
+                CHAR_NOODLE,
+                CHAR_RUSSEL
+        };
+    }
+
+    public static Role[] resolveAll(CyborgNoodle noodle, ServerRole... roles){
+
+        ArrayList<Role> list = new ArrayList<>();
+        for(ServerRole role : roles){
+            list.add(noodle.getRole(role));
+        }
+        return list.toArray(new Role[list.size()]);
+    }
 }

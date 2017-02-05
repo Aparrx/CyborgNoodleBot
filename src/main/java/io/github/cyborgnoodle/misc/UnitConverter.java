@@ -16,6 +16,8 @@
 
 package io.github.cyborgnoodle.misc;
 
+import io.github.cyborgnoodle.settings.Settings;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,6 +48,7 @@ public class UnitConverter {
         METRE(UnitType.LENGTH,"m",UnitSystem.METRIC, "Metre",new Aliases("meter","meters","metres","metre")),
         LITRE(UnitType.VOLUME,"l",UnitSystem.METRIC,"Litre",new Aliases("litre","litres","liter","liters")),
         SQ_METRE(UnitType.AREA,"m²",UnitSystem.METRIC,"Square metre"),
+        US_DOLLAR(UnitType.CURRENCY,"$",UnitSystem.IMPERIAL,"US Dollar",new Aliases("dollar","dollars","$s","usd")),
 
         XP(UnitType.DISCORD,"xp",UnitSystem.XP_SYS,"XP"),
 
@@ -96,6 +99,9 @@ public class UnitConverter {
                 new Aliases("hectare","hectars","hectares","hectar")),
         SQ_KILOMETRE(UnitType.AREA, "km²",UnitSystem.METRIC, "Square kilometres", Unit.SQ_METRE, 1000000.0d, 0.000001d),
 
+        //CURRENCY
+        EURO(UnitType.CURRENCY,"€",UnitSystem.METRIC,"Euro",Unit.US_DOLLAR, Settings.euro_to_usd(),Settings.usd_to_euro(), new Aliases("euro","euros","eur","€s")),
+
         //DISCORD
         SMONG(UnitType.DISCORD,"smong",UnitSystem.XP_SYS, "Smong", Unit.XP,1000.0d,(1.0d/1000.0d),null),
         LSD(UnitType.DISCORD,"lsd",UnitSystem.XP_SYS,"LSD", Unit.XP, 25000.0d, (1.0d/25000.0d),null),
@@ -143,6 +149,9 @@ public class UnitConverter {
 
             HECTARE.equivalent = SQ_FOOT;
             SQ_KILOMETRE.equivalent = SQ_MILE;
+
+            EURO.equivalent = US_DOLLAR;
+            US_DOLLAR.equivalent = EURO;
 
         }
 
@@ -355,6 +364,7 @@ public class UnitConverter {
         AREA("Area"),
         VOLUME("Volume"),
         MASS("Mass"),
+        CURRENCY("Currency"),
         DISCORD("Discord Unit"),
         ;
 

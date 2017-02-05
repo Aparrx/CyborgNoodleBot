@@ -18,38 +18,64 @@ package io.github.cyborgnoodle;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import io.github.cyborgnoodle.auth.Authentication;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Main class for CyborgNoodle Discord Bot
  */
 public class Main {
 
-    public static String TOKEN = "MjM3MTQzNzg4NzMwOTc0MjA4.CuanLQ.xMs3QaaPL2T7WZg1T4UXKsjns8s";
-
     private static CyborgNoodle NOODLE;
+    public static Authentication AUTH;
+    public static long START_STAMP;
 
     //APP ENTRY POINT
     public static void main(String[] args){
+
+        //boolean tm;
+        //tm = !Arrays.asList(args).contains("test");
 
         Thread.currentThread().setName("CN Main");
 
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         lc.getLogger("de.btobastian").setLevel(Level.WARN);
 
+        try {
+            readAuth();
+        } catch (Exception e) {
+            Log.error("Failed to read Auth file!");
+            e.printStackTrace();
+            return;
+        }
+
+        if(AUTH==null){
+            Log.error("Failed to read Auth file! (AUTH is empty)");
+            return;
+        }
+
+        START_STAMP = System.currentTimeMillis();
+
         NOODLE = null;
         Connection con = connect();
-        launchBot(con);
+        launchBot(con,false);
+
+
     }
 
     public static Connection connect(){
 
-        Connection connection = new Connection(TOKEN);
+        Connection connection = new Connection(AUTH.getDiscordtoken());
         connection.setConnected(true);
         return connection;
     }
 
-    public static void launchBot(Connection connection){
+    public static void launchBot(Connection connection, boolean testmode){
 
         while(connection.isConnecting()){
             try {
@@ -76,4 +102,16 @@ public class Main {
         return NOODLE;
     }
 
+    private static void readAuth() throws Exception {
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        SaveManager man = new SaveManager(null);
+        String json = man.read(man.getConfigFile(SaveManager.ConfigFile.AUTH));
+
+        Authentication auth = gson.fromJson(json, Authentication.class);
+
+        AUTH = auth;
+
+    }
 }

@@ -21,9 +21,9 @@ import ch.qos.logback.classic.LoggerContext;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.cyborgnoodle.auth.Authentication;
+import io.github.cyborgnoodle.util.Log;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -38,8 +38,9 @@ public class Main {
     //APP ENTRY POINT
     public static void main(String[] args){
 
-        //boolean tm;
-        //tm = !Arrays.asList(args).contains("test");
+        Log.info("STARTING "+Meta.getVersion());
+
+        boolean tm = Arrays.asList(args).contains("test");
 
         Thread.currentThread().setName("CN Main");
 
@@ -63,7 +64,7 @@ public class Main {
 
         NOODLE = null;
         Connection con = connect();
-        launchBot(con,false);
+        launchBot(con,tm);
 
 
     }
@@ -88,8 +89,10 @@ public class Main {
 
         if(connection.isConnected()){
             CyborgNoodle noodle = new CyborgNoodle(connection);
+            noodle.setTestmode(testmode);
             NOODLE = noodle;
             Log.info("Successfully created CyborgNoodle Bot, ready.");
+            if(noodle.isTestmode()) Log.warn("STARTING BOT IN TEST MODE!!!");
         }
         else{
             NOODLE = null;
@@ -107,11 +110,9 @@ public class Main {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         SaveManager man = new SaveManager(null);
-        String json = man.read(man.getConfigFile(SaveManager.ConfigFile.AUTH));
+        String json = man.read(SaveManager.ConfigFile.AUTH.getConfigFile());
 
-        Authentication auth = gson.fromJson(json, Authentication.class);
-
-        AUTH = auth;
+        AUTH = gson.fromJson(json, Authentication.class);
 
     }
 }

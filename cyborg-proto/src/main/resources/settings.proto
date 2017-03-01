@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option java_package = "io.github.cyborgnoodle";
+
+message Setting {
+
+    // XP [1xx]
+
+    bool xp_gain = 100;
+
+    int32 xp_msg_max = 101;
+    int32 xp_msg_min = 102;
+
+    int32 xp_bomb_max = 103;
+    int32 xp_bomb_min = 104;
+
+    int32 xp_bomb_timeout_max = 105;
+    int32 xp_bomb_timeout_min = 106;
+
+    // Chat [2xx]
+
+    bool chat_comment_edits = 200;
+    bool chat_comment_badwords = 201;
+    bool chat_comment_newuser = 202;
+    bool chat_comment_banuser = 203;
+    bool chat_comment_leaveuser = 204;
+
+    int32 chat_comment_edits_chance = 205;
+
+    // Auto Converter [3xx]
+
+    bool autoconv_enable = 300;
+
+    bool autoconv_time = 301;
+    bool autoconv_temperature = 302;
+    bool autoconv_length = 303;
+    bool autoconv_area = 304;
+    bool autoconv_volume = 305;
+    bool autoconv_mass = 306;
+    bool autoconv_currency = 307;
+
+    // Misc [4xx]
+
+    bool misc_addemoji = 400;
+
+    // Markov [5xx]
+
+    repeated int32 markov_exluded_channels = 500;
+
+}

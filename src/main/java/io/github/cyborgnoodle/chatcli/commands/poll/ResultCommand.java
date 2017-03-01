@@ -20,7 +20,7 @@ import de.btobastian.javacord.entities.message.embed.EmbedBuilder;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.settings.data.ServerRole;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.PieChart;
 import org.knowm.xchart.PieChartBuilder;
@@ -41,10 +41,10 @@ public class ResultCommand extends Command {
     @Override
     public void onCommand(String[] args) throws Exception {
 
-        HashMap<String, Integer> votes = getNoodle().getPolls().getVotes();
+        HashMap<String, Integer> votes = getNoodle().polls.getVotes();
 
         PieChart chart = new PieChartBuilder().theme(Styler.ChartTheme.GGPlot2).height(500).width(600)
-                .title(getNoodle().getPolls().getTitle()).build();
+                .title(getNoodle().polls.getTitle()).build();
 
         for(String option : votes.keySet()){
             chart.addSeries(option,votes.get(option));
@@ -53,7 +53,7 @@ public class ResultCommand extends Command {
         byte[] data = BitmapEncoder.getBitmapBytes(chart, BitmapEncoder.BitmapFormat.PNG);
 
 
-        EmbedBuilder em = getNoodle().getPolls().result();
+        EmbedBuilder em = getNoodle().polls.result();
         getChannel().sendMessage("",em);
         getChannel().sendFile(new ByteArrayInputStream(data),"png");
     }

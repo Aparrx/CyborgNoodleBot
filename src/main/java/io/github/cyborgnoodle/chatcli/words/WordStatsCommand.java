@@ -18,7 +18,7 @@ package io.github.cyborgnoodle.chatcli.words;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.misc.WordStats;
+import io.github.cyborgnoodle.features.wordstats.WordStats;
 
 /**
  * Created by arthur on 16.01.17.
@@ -31,7 +31,7 @@ public class WordStatsCommand extends Command {
 
     @Override
     public void onCommand(String[] args) {
-        getChannel().sendMessage("**Registered different words:** "+getNoodle().getWordStats().getData().getMap().size());
+        getChannel().sendMessage("**Registered different words:** "+getNoodle().words.getData().getMap().size());
         getChannel().sendMessage("**Registered exceptions:** "+ WordStats.EXCEPT.length);
         return;
     }
@@ -61,5 +61,8 @@ public class WordStatsCommand extends Command {
         return "Word commands";
     }
 
-
+    @Override
+    public boolean hidden() {
+        return true;
+    }
 }

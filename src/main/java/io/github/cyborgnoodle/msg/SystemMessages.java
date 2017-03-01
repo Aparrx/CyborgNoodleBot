@@ -16,7 +16,7 @@
 
 package io.github.cyborgnoodle.msg;
 
-import io.github.cyborgnoodle.Random;
+import io.github.cyborgnoodle.util.Random;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,7 +175,7 @@ public class SystemMessages {
         l.add("Rock the House");
         l.add("Stylo");
         l.add("El Mañana");
-        l.add("Halleluja Money");
+        l.add("Hallelujah Money");
         l.add("Demon Days");
         l.add("Gorillaz");
         l.add("nothing");

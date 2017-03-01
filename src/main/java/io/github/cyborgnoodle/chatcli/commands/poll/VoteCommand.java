@@ -31,7 +31,7 @@ public class VoteCommand extends Command {
     @Override
     public void onCommand(String[] args) throws Exception {
         String choice = args[0];
-        getNoodle().getPolls().vote(getAuthor(),choice,getChannel(),getMessage());
+        getNoodle().polls.vote(getAuthor(),choice,getChannel(),getMessage());
     }
 
     @Override

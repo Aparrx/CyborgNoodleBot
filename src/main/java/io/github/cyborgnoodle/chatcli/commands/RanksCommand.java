@@ -18,8 +18,8 @@ package io.github.cyborgnoodle.chatcli.commands;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.levels.RankCalculator;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.features.levels.RankCalculator;
+import io.github.cyborgnoodle.settings.data.ServerRole;
 import io.github.cyborgnoodle.util.table.CodeTable;
 
 import java.util.ArrayList;
@@ -81,5 +81,10 @@ public class RanksCommand extends Command {
     @Override
     public String description() {
         return "show available ranks";
+    }
+
+    @Override
+    public String category() {
+        return "XP";
     }
 }

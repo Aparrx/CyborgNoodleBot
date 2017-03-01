@@ -16,22 +16,22 @@
 
 package io.github.cyborgnoodle.cli;
 
-import ch.qos.logback.core.util.TimeUtil;
 import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
+import de.btobastian.javacord.entities.permissions.Role;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Log;
-import io.github.cyborgnoodle.levels.LevelConverser;
-import io.github.cyborgnoodle.levels.RankCalculator;
-import io.github.cyborgnoodle.msg.SystemMessages;
-import io.github.cyborgnoodle.news.Reddit;
-import io.github.cyborgnoodle.news.RedditPost;
-import io.github.cyborgnoodle.server.ServerChannel;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.features.levels.LevelConverser;
+import io.github.cyborgnoodle.features.levels.RankCalculator;
+import io.github.cyborgnoodle.features.news.Reddit;
+import io.github.cyborgnoodle.features.news.RedditPost;
+import io.github.cyborgnoodle.settings.data.ServerChannel;
+import io.github.cyborgnoodle.settings.data.ServerRole;
+import io.github.cyborgnoodle.util.Log;
 import net.dean.jraw.ApiException;
 import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.FlairTemplate;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -55,18 +55,80 @@ public class Commands {
         }
 
         if(cmd.equals("save")){
-            noodle.getSaveManager().saveAll();
+            noodle.savemanager.saveAll();
         }
 
         if(cmd.equals("load")){
-            noodle.getSaveManager().loadAll();
+            noodle.savemanager.loadAll();
         }
 
         if(cmd.startsWith("say")){
 
             String msg = cmd.replace("say ","");
-            noodle.say(msg);
+            noodle.getChannel(ServerChannel.GENERAL).sendMessage(msg);
 
+        }
+
+        if(cmd.startsWith("make")){
+
+            String[] args = cmd.split(" ");
+
+            if(args.length==3){
+                String userid = args[1];
+                String roleid = args[2];
+
+                User user;
+                try {
+                   user = noodle.api.getUserById(userid).get(10L, TimeUnit.SECONDS);
+                } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                    if(e instanceof TimeoutException) Log.error("Timeout 10 secs: USER");
+                    else{
+                        Log.error("Interrupted / Other: USER");
+                        e.printStackTrace();
+                    }
+                    return;
+                }
+                if(user==null){
+                    Log.warn("User not found!");
+                    return;
+                }
+
+                Role role = noodle.getServer().getRoleById(roleid);
+                if(role==null){
+                    Log.warn("Role not found!");
+                    return;
+                }
+
+                Log.info("Assigning ["+role.getName()+"] to @"+user.getName()+" ...");
+
+                Collection<Role> roles = user.getRoles(noodle.getServer());
+                roles.add(role);
+                try {
+                    noodle.getServer().updateRoles(user,roles.toArray(new Role[roles.size()])).get(10L,TimeUnit.SECONDS);
+                    Log.info("Success!");
+                    return;
+                } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                    if(e instanceof TimeoutException) Log.error("Timeout 10 secs: UPDATE_ROLES");
+                    else{
+                        Log.error("Interrupted / Other: UPDATE_ROLES");
+                        e.printStackTrace();
+                    }
+                    return;
+                }
+
+            }
+            else Log.error("make <userid> <roleid>");
+
+            return;
+        }
+
+        if(cmd.startsWith("cmd")){
+
+            String msg = cmd.replace("cmd ","");
+
+
+
+            return;
         }
 
         if(cmd.startsWith("count")){
@@ -95,11 +157,11 @@ public class Commands {
         }
 
         if(cmd.equals("bounty")){
-            Log.info((noodle.getLevels().registry().getNextBounty()-System.currentTimeMillis())+" ms left till next bounty.\n");
+            Log.info((noodle.levels.registry().getNextBounty()-System.currentTimeMillis())+" ms left till next bounty.\n");
         }
 
         if(cmd.equals("redditlogout")){
-            Reddit reddit = noodle.getReddit();
+            Reddit reddit = noodle.reddit;
 
             if(reddit.isConnected()){
                 reddit.logout();
@@ -108,7 +170,7 @@ public class Commands {
         }
 
         if(cmd.equals("redditlogin")){
-            Reddit reddit = noodle.getReddit();
+            Reddit reddit = noodle.reddit;
 
             if(!reddit.isConnected()){
                 reddit.login();
@@ -120,14 +182,14 @@ public class Commands {
 
             String msg = cmd.replace("postdata ","");
             RedditPost rp = noodle
-                    .getReddit()
+                    .reddit
                     .getData()
                     .getPost(msg);
             Log.info("Post "+msg+": "+rp.getUnrelatedVotes()+" UR votes");
         }
 
         if(cmd.equals("flairs")){
-            Reddit reddit = noodle.getReddit();
+            Reddit reddit = noodle.reddit;
 
             AccountManager man = new AccountManager(reddit.getReddit());
             try {
@@ -145,7 +207,7 @@ public class Commands {
             String msg = cmd.replace("getrole ","");
             Integer i = Integer.valueOf(msg);
             ServerRole role = RankCalculator.getRoleforLevel(i);
-            Server srv = noodle.getAPI().getServerById("229000154936639488");
+            Server srv = noodle.api.getServerById("229000154936639488");
             Log.info("Role you get for Level "+i+": "+srv.getRoleById(role.getID()).getName());
         }
 
@@ -169,7 +231,7 @@ public class Commands {
 
         if(cmd.startsWith("postreddit")){
 
-            noodle.getReddit().postNews("http://i.imgur.com/LII89SM.jpg","this is a test caption featuring @gorillaz and @watashiwanoodle and not more. yo.",System.currentTimeMillis(),"cyborgnoodlebot","http://what.ever/com","http://instagram.com/cyborgnoodlebot/");
+            noodle.reddit.postNews("http://i.imgur.com/LII89SM.jpg","this is a test caption featuring @gorillaz and @watashiwanoodle and not more. yo.",System.currentTimeMillis(),"cyborgnoodlebot","http://what.ever/com","http://instagram.com/cyborgnoodlebot/");
 
         }
 
@@ -180,7 +242,7 @@ public class Commands {
             String user = msg[1];
 
             User u = null;
-            for(User usr : noodle.getAPI().getUsers()){
+            for(User usr : noodle.api.getUsers()){
                 if(usr.getName().equalsIgnoreCase(user)){
                     u = usr;
                     break;
@@ -189,7 +251,7 @@ public class Commands {
 
             if(u==null) Log.error("User not found: "+user);
             else{
-                noodle.getLevels().gainXP(u);
+                noodle.levels.gainXP(u);
             }
         }
 
@@ -197,15 +259,15 @@ public class Commands {
 
             String msg = cmd.replace("rank ","");
             User u = null;
-            for(User usr : noodle.getAPI().getUsers()){
+            for(User usr : noodle.api.getUsers()){
                 if(usr.getName().equalsIgnoreCase(msg)){
                     u = usr;
                     break;
                 }
             }
 
-            long xptotal = noodle.getLevels().registry().get(u).getXp();
-            int level = noodle.getLevels().registry().get(u).getLevel();
+            long xptotal = noodle.levels.registry().get(u).getXp();
+            int level = noodle.levels.registry().get(u).getLevel();
 
             Log.info("Total XP: "+xptotal);
             Log.info("Level: "+level);
@@ -234,7 +296,7 @@ public class Commands {
             int lvli = Integer.valueOf(lvl);
 
             User u = null;
-            for(User usr : noodle.getAPI().getUsers()){
+            for(User usr : noodle.api.getUsers()){
                 if(usr.getName().equalsIgnoreCase(user)){
                     u = usr;
                     break;

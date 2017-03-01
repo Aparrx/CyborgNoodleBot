@@ -17,9 +17,9 @@
 package io.github.cyborgnoodle.chatcli.commands;
 
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.msg.SystemMessages;
+import io.github.cyborgnoodle.util.Random;
 
 /**
  * Created by arthur on 16.01.17.
@@ -58,5 +58,15 @@ public class FlipCommand extends Command {
     @Override
     public String description() {
         return "flip a coin";
+    }
+
+    @Override
+    public String category() {
+        return "Utility";
+    }
+
+    @Override
+    public boolean hidden() {
+        return true;
     }
 }

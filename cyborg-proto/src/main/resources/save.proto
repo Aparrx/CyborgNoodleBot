@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option java_package = "io.github.cyborgnoodle";
+
+//WORDSTATS
+
+message WordStats {
+
+    map<string,WordStatsEntry> words = 1;
+
+}
+
+message WordStatsEntry {
+
+    int64 count = 1;
+    map<string,int64> users = 2;
+
+}
+
+//MARKOV
+
+message Markov {
+    map<string,MarkovChain> users = 1;
+}
+
+message MarkovChain {
+    map<string,WordList> chain = 1;
+}
+
+message WordList {
+    repeated string words = 1;
+}

@@ -18,9 +18,9 @@ package io.github.cyborgnoodle.chatcli.commands;
 
 import com.google.common.base.Joiner;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.msg.ConversationMessages;
+import io.github.cyborgnoodle.util.Random;
 
 /**
  * Created by arthur on 16.01.17.
@@ -76,5 +76,10 @@ public class WhatCommand extends Command {
     @Override
     public String description() {
         return "let the cyborg decide";
+    }
+
+    @Override
+    public String category() {
+        return "Utility";
     }
 }

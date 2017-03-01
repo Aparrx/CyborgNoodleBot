@@ -16,17 +16,14 @@
 
 package io.github.cyborgnoodle.chatcli.commands;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import de.btobastian.javacord.entities.message.embed.EmbedBuilder;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Log;
-import io.github.cyborgnoodle.settings.Settings;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
-import io.github.cyborgnoodle.server.ServerRole;
-import io.github.cyborgnoodle.settings.SettingsEntry;
-import io.github.cyborgnoodle.util.StringUtils;
+import io.github.cyborgnoodle.settings.CyborgSettings;
+import io.github.cyborgnoodle.settings.data.ServerRole;
+import io.github.cyborgnoodle.settings.util.SettingsCode;
+
+import java.io.IOException;
 
 /**
  * Created by arthur on 29.01.17.
@@ -39,86 +36,30 @@ public class SettingsCommand extends Command{
 
     @Override
     public void onCommand(String[] args) throws Exception {
-        if(args.length==2){
+        if(args.length>=1){
 
-            String field = args[0];
-            String value = args[1];
+            String code = args[0];
 
-            Object vo;
-
+            CyborgSettings newset;
             try {
-                vo = fromSetting(value);
-            } catch (Exception e) {
-                getChannel().sendMessage("Not a valid value. Value must be `true`, `false` or a number (e.g. `27.3`)!");
+                newset = SettingsCode.parse(code);
+            } catch (IOException e) {
+                getChannel().sendMessage("Invalid Settings code!");
                 return;
             }
 
-            boolean suc;
-            try {
-                suc = Settings.set(field, vo);
-            } catch (IllegalArgumentException e) {
-                getChannel().sendMessage("Invalid field type!");
-                return;
-            }
+            getNoodle().settings.update(newset);
 
-            if(suc) getChannel().sendMessage("*"+field+"*: "+vo);
-            else getChannel().sendMessage("Failed to set settings property!");
+            getChannel().sendMessage("Settings were updated.");
 
         } else if(args.length==0){
 
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.setTitle("Bot Settings");
+            String code = SettingsCode.create(getNoodle().settings);
 
-            Multimap<String,SettingsEntry> categories = HashMultimap.create();
+            getChannel().sendMessage("Current Settings:\n```\n"+code+"\n```");
 
-            for(String key : Settings.get().keySet()){
-
-                SettingsEntry entry = Settings.get().get(key);
-
-                String category = entry.getCategory();
-                categories.put(category,entry);
-            }
-
-            for(String cat : categories.keySet()){
-
-                String desc = "";
-
-                for(SettingsEntry entry : categories.get(cat)){
-
-                    String name = entry.getName();
-                    Object value = entry.getValue();
-
-                    desc = desc + name + ": `"+value+"`\n";
-
-                }
-
-                embed.setFooter("Use `!set <field> <true/false/number>` to change settings");
-
-                embed.addField(cat,desc,false);
-
-            }
-
-            getChannel().sendMessage("",embed);
 
         } else showInvalidArguments();
-    }
-
-    private Object fromSetting(String setting){
-
-        if(setting.equalsIgnoreCase("true")) return true;
-        else if(setting.equalsIgnoreCase("false")) return false;
-        else if(StringUtils.isNumeric(setting)){
-            try {
-                Double d = Double.valueOf(setting);
-                return d;
-            } catch (NumberFormatException e) {
-                Log.info("StringUtils::isNumeric failed??");
-                e.printStackTrace();
-                throw e;
-            }
-
-        } else throw new IllegalArgumentException("No readable format!");
-
     }
 
     @Override
@@ -128,7 +69,7 @@ public class SettingsCommand extends Command{
 
     @Override
     public String usage() {
-        return "!set | !set <field> true/false";
+        return "!set | !set <code>";
     }
 
     @Override
@@ -138,11 +79,16 @@ public class SettingsCommand extends Command{
 
     @Override
     public String description() {
-        return "set and view bot settings";
+        return "set and get bot settings for use with the external settings app";
     }
 
     @Override
     public Permission fullPermission() {
         return new Permission(ServerRole.OWNER);
+    }
+
+    @Override
+    public String category() {
+        return "System";
     }
 }

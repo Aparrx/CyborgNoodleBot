@@ -18,10 +18,10 @@ package io.github.cyborgnoodle.chatcli.commands;
 
 import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.settings.data.ServerRole;
+import io.github.cyborgnoodle.util.Log;
 
 /**
  * Created by arthur on 16.01.17.
@@ -38,7 +38,7 @@ public class AvatarCommand extends Command {
         String mention = args[0];
 
         User user = null;
-        for(User u : getNoodle().getAPI().getUsers()){
+        for(User u : getNoodle().api.getUsers()){
             if(u.getMentionTag().equalsIgnoreCase(mention)) user = u;
         }
 
@@ -73,5 +73,15 @@ public class AvatarCommand extends Command {
     @Override
     public Permission fullPermission() {
         return new Permission(ServerRole.STAFF);
+    }
+
+    @Override
+    public String category() {
+        return "Discord";
+    }
+
+    @Override
+    public boolean hidden() {
+        return true;
     }
 }

@@ -19,8 +19,8 @@ package io.github.cyborgnoodle.misc;
 import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.message.Message;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.misc.quotes.Quote;
-import io.github.cyborgnoodle.misc.quotes.Quotes;
+import io.github.cyborgnoodle.features.quotes.Quote;
+import io.github.cyborgnoodle.features.quotes.Quotes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +62,7 @@ public class ReactionWords {
 
         ReactionEntry entry = words.entries.get(name);
         if(entry==null) return null;
-        Channel channel = noodle.getAPI().getChannelById(entry.getChannelID());
+        Channel channel = noodle.api.getChannelById(entry.getChannelID());
         return Quotes.create(noodle).byMessageID(channel,entry.getMessageID());
 
     }

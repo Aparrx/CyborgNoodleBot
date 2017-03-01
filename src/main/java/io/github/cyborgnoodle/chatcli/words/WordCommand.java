@@ -32,8 +32,8 @@ public class WordCommand extends Command {
     @Override
     public void onCommand(String[] args) {
         String word = BadWords.adjustMsg(args[0].toLowerCase());
-        if(getNoodle().getWordStats().getData().getEntries().containsKey(word)){
-            Long count = getNoodle().getWordStats().getData().getEntries().get(word).getCount();
+        if(getNoodle().words.getData().getEntries().containsKey(word)){
+            Long count = getNoodle().words.getData().getEntries().get(word).getCount();
             getChannel().sendMessage("**"+word+"** - "+count+"x");
         } else getChannel().sendMessage("Nobody ever said this word on here or it is on the exception list! "+getAuthor().getMentionTag());
 

@@ -19,14 +19,12 @@ package io.github.cyborgnoodle.chatcli.commands;
 import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.levels.TempUser;
+import io.github.cyborgnoodle.features.levels.TempUser;
 import io.github.cyborgnoodle.util.StringUtils;
 import io.github.cyborgnoodle.util.table.CodeTable;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Formatter;
-import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -53,9 +51,9 @@ public class LevelsCommand extends Command {
         table.addRow("","NAME","XP","LEVEL");
         table.addRow("","","","");
 
-        for(String uid : getNoodle().getLevels().getLeaderboard().keySet()){
+        for(String uid : getNoodle().levels.getLeaderboard().keySet()){
 
-            TempUser tu = getNoodle().getLevels().getLeaderboard().get(uid);
+            TempUser tu = getNoodle().levels.getLeaderboard().get(uid);
 
             Long xp = tu.getXp();
             String sxp = deciformat.format(xp);
@@ -111,5 +109,10 @@ public class LevelsCommand extends Command {
     @Override
     public String description() {
         return "show the leaderboard";
+    }
+
+    @Override
+    public String category() {
+        return "XP";
     }
 }

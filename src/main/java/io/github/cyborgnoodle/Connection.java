@@ -19,6 +19,7 @@ package io.github.cyborgnoodle;
 import com.google.common.util.concurrent.FutureCallback;
 import de.btobastian.javacord.DiscordAPI;
 import de.btobastian.javacord.Javacord;
+import io.github.cyborgnoodle.util.Log;
 
 /**
  * Represents the connection to the Discord API

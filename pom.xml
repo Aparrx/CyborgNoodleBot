@@ -100,6 +100,20 @@
             <version>0.9.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.fathzer/javaluator -->
+        <dependency>
+            <groupId>com.fathzer</groupId>
+            <artifactId>javaluator</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yahoofinance-api</groupId>
+            <artifactId>YahooFinanceAPI</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+
 
     </dependencies>
 

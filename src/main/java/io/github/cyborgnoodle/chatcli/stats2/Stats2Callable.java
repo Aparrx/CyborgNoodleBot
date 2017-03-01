@@ -20,11 +20,12 @@ import com.google.common.util.concurrent.FutureCallback;
 import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
-import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.chatcli.commands.Stats2Command;
-import io.github.cyborgnoodle.statistics.StatsPair;
-import io.github.cyborgnoodle.statistics.StatsType;
+import io.github.cyborgnoodle.features.statistics.Statistics;
+import io.github.cyborgnoodle.features.statistics.StatsPair;
+import io.github.cyborgnoodle.features.statistics.StatsType;
 import io.github.cyborgnoodle.util.JCUtil;
+import io.github.cyborgnoodle.util.Log;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
@@ -97,7 +98,7 @@ public class Stats2Callable implements Callable<Void> {
                 String[] rest = Arrays.copyOfRange(args, 1, args.length);
 
                 for(String ch : rest){
-                    Channel channel = JCUtil.getChannelByMention(c.getNoodle().getAPI(),ch);
+                    Channel channel = JCUtil.getChannelByMention(c.getNoodle().api,ch);
                     if(channel!=null){
                         List<Number> nums = times.asYNumbers(StatsType.MSG_SPEED_CHANNEL, channel.getId());
                         XYSeries s = chart.addSeries("#" + channel.getName(), dtsstr, nums);
@@ -109,7 +110,7 @@ public class Stats2Callable implements Callable<Void> {
                 String[] rest = Arrays.copyOfRange(args, 1, args.length);
 
                 for(String ch : rest){
-                    User user = JCUtil.getUserByMention(c.getNoodle().getAPI(),ch);
+                    User user = JCUtil.getUserByMention(c.getNoodle().api,ch);
                     if(user!=null){
                         XYSeries s = chart.addSeries("@"+user.getName(),dtsstr,times.asYNumbers(StatsType.MSG_SPEED_USER,user.getId()));
                         s.setMarker(SeriesMarkers.NONE);
@@ -128,7 +129,7 @@ public class Stats2Callable implements Callable<Void> {
 
                     for(String mention : rest){
 
-                        User user = JCUtil.getUserByMention(c.getNoodle().getAPI(),mention);
+                        User user = JCUtil.getUserByMention(c.getNoodle().api,mention);
 
                         String name;
                         if(user==null) break;
@@ -147,7 +148,7 @@ public class Stats2Callable implements Callable<Void> {
 
             } else if(argument.equalsIgnoreCase("count")){
                 type = StatsType.MSG_COUNT;
-                title = "Message count";
+                title = "Message count ["+ Statistics.getMsgcount()+"]";
                 yaxis = "messages";
             }
 

@@ -17,7 +17,7 @@
 package io.github.cyborgnoodle.chatcli;
 
 import de.btobastian.javacord.entities.message.Message;
-import io.github.cyborgnoodle.Log;
+import io.github.cyborgnoodle.util.Log;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,17 +39,17 @@ public class Commands {
         return commands;
     }
 
-    public static void execute(Message message){
-        execute(message,false);
-    }
-
-    public static void execute(Message message, boolean testmode){
+    public static boolean execute(Message message, boolean testmode){
 
         String content = message.getContent();
 
         if(content.startsWith("!")){
 
-            String[] localargs = content.replace("!","").split(" ");
+            String[] localargs;
+            localargs = content.replace("!","").split(" ");
+
+
+
             String cmd = localargs[0];
             String[] args;
             try {
@@ -63,21 +63,28 @@ public class Commands {
 
             if(command!=null){
 
-                if(testmode) message.getChannelReceiver().sendMessage(
-                        "**======**\n**WARNING:** Bot is in test mode, commands will not work as expected or will show wrong data!\n**======**");
+                if(testmode){
+                    message.getChannelReceiver().sendMessage(
+                            "**======**\n**WARNING:** Bot is in test mode, commands will not work as expected or will show wrong data!\n**======**");
+                }
 
                 try {
                     command.execute(message,args);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    message.getChannelReceiver().sendMessage("Internal Error!");
+                    message.getChannelReceiver().sendMessage("Internal Error: "+e.getClass().getSimpleName()+": "+e.getMessage());
                 }
+                return true;
             }
             else{
                 message.getChannelReceiver().sendMessage("[Invalid Command]");
                 message.delete();
+                return false;
             }
-        }
+
+
+
+        } else return false;
 
     }
 

@@ -32,7 +32,7 @@ public class WhenCommand extends Command {
     @Override
     public void onCommand(String[] args) {
         getChannel().sendMessage("**Next Gift in:** "+ Util.toTimeFormat(
-                getNoodle().getLevels().registry().getNextBounty()-System.currentTimeMillis()));
+                getNoodle().levels.registry().getNextBounty()-System.currentTimeMillis()));
     }
 
     @Override
@@ -53,5 +53,10 @@ public class WhenCommand extends Command {
     @Override
     public String description() {
         return "show when the next XP bomb drops";
+    }
+
+    @Override
+    public String category() {
+        return "XP";
     }
 }

@@ -19,7 +19,7 @@ package io.github.cyborgnoodle.chatcli.commands.poll;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.settings.data.ServerRole;
 
 import java.util.Arrays;
 
@@ -38,7 +38,7 @@ public class PollCommand extends Command {
         if(!Arrays.asList(args).contains("#")){
             String[] choices = args;
 
-            getNoodle().getPolls().start(choices,getChannel(),null);
+            getNoodle().polls.start(choices,getChannel(),null);
         }
         else {
 
@@ -50,7 +50,7 @@ public class PollCommand extends Command {
 
             String[] choices = choicepart.split(" ");
 
-            getNoodle().getPolls().start(choices,getChannel(),descpart);
+            getNoodle().polls.start(choices,getChannel(),descpart);
 
         }
 
@@ -85,4 +85,6 @@ public class PollCommand extends Command {
     public String category() {
         return "Poll commands";
     }
+
+
 }

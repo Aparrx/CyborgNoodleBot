@@ -18,7 +18,7 @@ package io.github.cyborgnoodle.chatcli.commands;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.server.ServerUser;
+import io.github.cyborgnoodle.settings.data.ServerUser;
 import io.github.cyborgnoodle.util.TimeUtils;
 
 /**
@@ -62,5 +62,10 @@ public class TimeCommand extends Command {
     @Override
     public String description() {
         return "show local time for regular users";
+    }
+
+    @Override
+    public String category() {
+        return "Discord";
     }
 }

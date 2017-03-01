@@ -23,12 +23,13 @@ import de.btobastian.javacord.listener.message.MessageCreateListener;
 import de.btobastian.javacord.listener.message.MessageDeleteListener;
 import de.btobastian.javacord.listener.message.MessageEditListener;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Log;
-import io.github.cyborgnoodle.Random;
-import io.github.cyborgnoodle.settings.Settings;
 import io.github.cyborgnoodle.chatcli.Commands;
-import io.github.cyborgnoodle.misc.AutoConverter;
-import io.github.cyborgnoodle.statistics.Statistics;
+import io.github.cyborgnoodle.features.calculator.AutoCalculator;
+import io.github.cyborgnoodle.features.converter.AutoConverter;
+import io.github.cyborgnoodle.features.markov.Markov;
+import io.github.cyborgnoodle.features.statistics.Statistics;
+import io.github.cyborgnoodle.util.Log;
+import io.github.cyborgnoodle.util.Random;
 
 /**
  *
@@ -44,28 +45,25 @@ public class MessageListener implements MessageCreateListener, MessageEditListen
     public void onMessageCreate(DiscordAPI discordAPI, Message message) {
 
         try {
-            if (!message.getAuthor().equals(noodle.getAPI().getYourself())) {
+            if (!message.getAuthor().equals(noodle.api.getYourself())) {
                 if (true) { //workaround original: !noodle.getSpamFilter().isSpam(message)
 
-                    if (noodle.getSpamFilter().isTimeout(message.getAuthor())) {
-                        message.delete();
-                        return;
-                    }
+                    if(noodle.settings.xp.gain.get()) noodle.levels.onMessage(message.getAuthor());
 
-                    if(Settings.gainxp()) noodle.getLevels().onMessage(message.getAuthor());
+                    boolean wascmd = Commands.execute(message, noodle.isTestmode());
+                    if(!wascmd) Markov.getData().message(message.getAuthor().getId(),message.getContent());
+                    if(true) Statistics.onMessage(message); //TODO
+                    if(noodle.settings.chat.comment_badwords.get()) noodle.getBadWords().onMessage(message);
 
-                    Commands.execute(message, false);
-                    if(Settings.trackstats()) Statistics.onMessage(message);
-                    if(Settings.commentbadwords()) noodle.getBadWords().onMessage(message);
+                    noodle.words.onMessage(message);
 
-                    noodle.getWordStats().onMessage(message);
-
-                    if (Settings.addemoji() && message.getMentions().contains(noodle.getAPI().getYourself())) {
+                    if (message.getMentions().contains(noodle.api.getYourself())) {
                         message.addUnicodeReaction(Random.choose(EmojiManager.getAll()).getUnicode());
                     }
 
                     if (!message.getContent().startsWith("!")) {
-                        if(Settings.autoconverter()) AutoConverter.onMsg(message);
+                        if(noodle.settings.autoconv.enable.get()) AutoConverter.onMsg(message,noodle);
+                        if(false) AutoCalculator.onMsg(message); //TODO
                     }
                 }
             }
@@ -84,10 +82,10 @@ public class MessageListener implements MessageCreateListener, MessageEditListen
 
     public void onMessageEdit(DiscordAPI discordAPI, Message message, String s) {
 
-        int r = Random.randInt(0,50);
+        int r = Random.randInt(0,noodle.settings.chat.comment_edits_chance.get());
 
         if(r==1){
-            if(Settings.comment_edits()) message.getChannelReceiver().sendMessage("I saw that edit "+message.getAuthor().getMentionTag());
+            if(noodle.settings.chat.comment_edits.get()) message.getChannelReceiver().sendMessage("I saw that edit "+message.getAuthor().getMentionTag());
         }
 
     }

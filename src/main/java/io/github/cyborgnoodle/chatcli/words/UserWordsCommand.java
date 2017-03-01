@@ -18,9 +18,9 @@ package io.github.cyborgnoodle.chatcli.words;
 
 import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.misc.WordStatsEntry;
+import io.github.cyborgnoodle.features.wordstats.WordStatsEntry;
+import io.github.cyborgnoodle.util.Log;
 import io.github.cyborgnoodle.util.StringUtils;
 import javafx.util.Pair;
 import org.knowm.xchart.BitmapEncoder;
@@ -50,7 +50,7 @@ public class UserWordsCommand extends Command {
         String mentiontag = args[0];
 
         User user = null;
-        for(User u : getNoodle().getAPI().getUsers()){
+        for(User u : getNoodle().api.getUsers()){
             if(u.getMentionTag().equalsIgnoreCase(mentiontag)) user = u;
         }
 
@@ -60,8 +60,8 @@ public class UserWordsCommand extends Command {
         }
 
         HashMap<String,Long> toplist = new HashMap<>();
-        for(String word : getNoodle().getWordStats().getData().getEntries().keySet()){
-            WordStatsEntry entry = getNoodle().getWordStats().getData().getEntries().get(word);
+        for(String word : getNoodle().words.getData().getEntries().keySet()){
+            WordStatsEntry entry = getNoodle().words.getData().getEntries().get(word);
             if(entry.getUsers().containsKey(user.getId())){
                 Long wordcount = entry.getUsers().get(user.getId());
                 toplist.put(word,wordcount);

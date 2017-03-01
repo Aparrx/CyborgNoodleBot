@@ -25,10 +25,10 @@ import de.btobastian.javacord.entities.message.embed.Embed;
 import de.btobastian.javacord.entities.message.embed.EmbedBuilder;
 import de.btobastian.javacord.entities.message.embed.EmbedImage;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.misc.GoogleURLShortening;
 import io.github.cyborgnoodle.util.JCUtil;
+import io.github.cyborgnoodle.util.Random;
 
 import javax.annotation.Nullable;
 import java.net.MalformedURLException;
@@ -60,7 +60,7 @@ public class QuoteCommand extends Command {
             String ch = args[1];
             if(ch.contains("<#")){
                 String chid = ch.replace("<#","").replace(">","");
-                Channel xc = getNoodle().getAPI().getChannelById(chid);
+                Channel xc = getNoodle().api.getChannelById(chid);
                 if(xc!=null) channel = xc;
                 else {
                     getChannel().sendMessage("Channel not found! Falling back to this channel.");
@@ -126,8 +126,8 @@ public class QuoteCommand extends Command {
 
             if(str.equalsIgnoreCase("?")){
                 Message msg = Random.choose(history.getMessages(),
-                        findByUser(history,getNoodle().getAPI().getYourself().getId()).toArray(
-                                new Message[findByUser(history,getNoodle().getAPI().getYourself().getId()).size()]));
+                        findByUser(history,getNoodle().api.getYourself().getId()).toArray(
+                                new Message[findByUser(history,getNoodle().api.getYourself().getId()).size()]));
                 if(msg!=null) message = msg;
                 else{
                     getChannel().sendMessage("Quote failed! No messages in this channel?");
@@ -142,7 +142,7 @@ public class QuoteCommand extends Command {
                 }
                 Message msg = null;
                 try {
-                    msg = JCUtil.getChannelMessageByID(getNoodle().getAPI(),channel,msgid).get();
+                    msg = JCUtil.getChannelMessageByID(getNoodle().api,channel,msgid).get();
                 } catch (InterruptedException | ExecutionException e) {
                     getChannel().sendMessage("Failed to find message! (Does it exist?)");
                 }
@@ -283,5 +283,10 @@ public class QuoteCommand extends Command {
 
         NONE, BEFORE, AFTER
 
+    }
+
+    @Override
+    public String category() {
+        return "Utility";
     }
 }

@@ -48,7 +48,7 @@ public class ErrorNotifier {
                 MARKER+"\n"+trace+"\n"+MARKER;
 
         try {
-            noodle.getAPI().getUserById(USER).get().sendMessage(msg);
+            noodle.api.getUserById(USER).get().sendMessage(msg);
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         } catch (ExecutionException e1) {

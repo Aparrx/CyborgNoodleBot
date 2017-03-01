@@ -16,7 +16,7 @@
 
 package io.github.cyborgnoodle.msg;
 
-import io.github.cyborgnoodle.Random;
+import io.github.cyborgnoodle.util.Random;
 
 import java.util.ArrayList;
 import java.util.Arrays;

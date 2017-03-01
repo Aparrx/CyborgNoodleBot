@@ -21,7 +21,10 @@ import de.btobastian.javacord.entities.message.embed.EmbedBuilder;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Commands;
+import io.github.cyborgnoodle.util.Log;
 import io.github.cyborgnoodle.util.StringUtils;
+
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by arthur on 16.01.17.
@@ -36,10 +39,20 @@ public class HelpCommand extends Command {
     public void onCommand(String[] args) throws Exception {
 
         if(args.length==0){
-            showFullHelp();
+            showFullHelp(DisplayMode.PERM);
         }
         else {
             String cmd = args[0];
+
+            if(cmd.equalsIgnoreCase("all")){
+                showFullHelp(DisplayMode.ALL);
+                return;
+            }
+            if(cmd.equalsIgnoreCase("full")){
+                showFullHelp(DisplayMode.FULL);
+                return;
+            }
+
             Command command = Commands.getCommands().get(cmd);
             if(command==null) getChannel().sendMessage(
                     "Unkown command! Use `!help` without any argument to show a list of existing commands!");
@@ -91,7 +104,7 @@ public class HelpCommand extends Command {
 
     }
 
-    private void showFullHelp() throws Exception{
+    private void showFullHelp(DisplayMode mode) throws Exception{
 
         //           category, command
         HashMultimap<String,Command> commands = HashMultimap.create();
@@ -108,10 +121,15 @@ public class HelpCommand extends Command {
 
         e.setDescription(desc);
 
+
+        int fieldcount = 1;
+
         for(String category : commands.keySet()){
 
             String msg = "";
             for (Command cmd : commands.get(category)) {
+                if(!mode.equals(DisplayMode.FULL)) if(cmd.hidden()) continue;
+                if(!mode.equals(DisplayMode.FULL) && !mode.equals(DisplayMode.ALL)) if(!getNoodle().hasPermission(getAuthor(),cmd.fullPermission())) continue;
                 String usage = "";
                 if(cmd.usage()!=null) usage = usage + "`"+cmd.usage()+"`";
                 else usage = usage + "`!"+cmd.aliases()[0]+"`";
@@ -119,11 +137,25 @@ public class HelpCommand extends Command {
                 msg = msg + usage + " " + cmd.description() + "\n";
             }
 
-            e.addField(category,msg,false);
+            if(msg.equalsIgnoreCase("")) continue; //when the category is empty or hidden
 
+            e.addField(category,msg,false);
+            fieldcount++;
+
+            if(fieldcount>11){
+                getChannel().sendMessage("",e).get();
+                e = new EmbedBuilder();
+                fieldcount = 1;
+            }
         }
 
-        getChannel().sendMessage("",e);
+        try {
+            getChannel().sendMessage("",e).get();
+        } catch (InterruptedException | ExecutionException e1) {
+            Log.error("Failed to send !help output!");
+            Log.error(e1.getMessage());
+            e1.printStackTrace();
+        }
 
     }
 
@@ -145,5 +177,28 @@ public class HelpCommand extends Command {
     @Override
     public String description() {
         return "Show general help or command help";
+    }
+
+    @Override
+    public String category() {
+        return "Utility";
+    }
+
+    private enum DisplayMode {
+        /**
+         * Show only the commands the user has permissions for
+         */
+        PERM,
+
+        /**
+         * Ignore the permissions and show every command
+         */
+        ALL,
+
+        /**
+         * Show everything, even hidden ones
+         */
+        FULL,
+        ;
     }
 }

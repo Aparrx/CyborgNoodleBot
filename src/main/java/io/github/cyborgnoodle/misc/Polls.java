@@ -75,9 +75,8 @@ public class Polls {
                 channel.sendMessage("Can't start a poll with less than 2 choices!");
                 return;
             }
-            if(choices.length>6){
-                channel.sendMessage("Can't start a poll with more than 6 choices!");
-                return;
+            if(choices.length>15){
+                channel.sendMessage("Can't start a poll with more than 15 options!");
             }
 
             for(String c : choices){

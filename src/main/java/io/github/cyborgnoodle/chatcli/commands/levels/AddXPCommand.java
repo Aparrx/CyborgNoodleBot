@@ -20,7 +20,7 @@ import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.settings.data.ServerRole;
 import io.github.cyborgnoodle.util.JCUtil;
 
 /**
@@ -39,7 +39,7 @@ public class AddXPCommand extends Command{
             String mtag = args[0];
             String xpstr = args[1];
 
-            User user = JCUtil.getUserByMention(getNoodle().getAPI(), mtag);
+            User user = JCUtil.getUserByMention(getNoodle().api, mtag);
 
             if(user==null){
                 getChannel().sendMessage("Unknown user!");
@@ -60,7 +60,7 @@ public class AddXPCommand extends Command{
                 return;
             }
 
-            getNoodle().getLevels().registry().get(user).addXp(xp);
+            getNoodle().levels.registry().get(user).addXp(xp);
             getChannel().sendMessage("Successfully added "+xp+"!");
 
         } else this.showInvalidArguments();
@@ -89,5 +89,10 @@ public class AddXPCommand extends Command{
     @Override
     public Permission fullPermission() {
         return new Permission(ServerRole.OWNER);
+    }
+
+    @Override
+    public String category() {
+        return "XP";
     }
 }

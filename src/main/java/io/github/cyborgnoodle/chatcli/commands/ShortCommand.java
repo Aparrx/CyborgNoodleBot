@@ -66,4 +66,14 @@ public class ShortCommand extends Command {
     public String description() {
         return "shorten an URL";
     }
+
+    @Override
+    public String category() {
+        return "Utility";
+    }
+
+    @Override
+    public boolean hidden() {
+        return true;
+    }
 }

@@ -18,11 +18,11 @@ package io.github.cyborgnoodle.chatcli.commands.meme;
 
 import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.misc.funtance.data.ObjectData;
-import io.github.cyborgnoodle.misc.funtance.data.OrtData;
-import io.github.cyborgnoodle.misc.funtance.data.VerbData;
+import io.github.cyborgnoodle.features.funtance.data.ObjectData;
+import io.github.cyborgnoodle.features.funtance.data.OrtData;
+import io.github.cyborgnoodle.features.funtance.data.VerbData;
+import io.github.cyborgnoodle.util.Random;
 
 /**
  * Created by arthur on 17.01.17.
@@ -38,7 +38,7 @@ public class SueCommand extends Command {
 
         String mention = args[0];
         String id = mention.replace("<@", "").replace(">", "");
-        User user = getNoodle().getAPI().getCachedUserById(id);
+        User user = getNoodle().api.getCachedUserById(id);
 
         if(user==null){
             getChannel().sendMessage("User not found!");
@@ -76,4 +76,10 @@ public class SueCommand extends Command {
     public String category() {
         return "Meme commands";
     }
+
+    @Override
+    public boolean hidden() {
+        return true;
+    }
+
 }

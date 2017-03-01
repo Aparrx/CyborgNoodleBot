@@ -19,7 +19,7 @@ package io.github.cyborgnoodle.chatcli.commands;
 import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.levels.LevelConverser;
+import io.github.cyborgnoodle.features.levels.LevelConverser;
 import io.github.cyborgnoodle.misc.Util;
 import io.github.cyborgnoodle.util.StringUtils;
 
@@ -43,7 +43,7 @@ public class RankCommand extends Command {
         else {
             String us = args[0];
             User u = null;
-            for(User usr : getNoodle().getAPI().getUsers()){
+            for(User usr : getNoodle().api.getUsers()){
                 if(usr.getMentionTag().equalsIgnoreCase(us)){
                     u = usr;
                     break;
@@ -57,8 +57,8 @@ public class RankCommand extends Command {
             return;
         }
 
-        long xptotal = getNoodle().getLevels().registry().get(user).getXp();
-        int level = getNoodle().getLevels().registry().get(user).getLevel();
+        long xptotal = getNoodle().levels.registry().get(user).getXp();
+        int level = getNoodle().levels.registry().get(user).getLevel();
 
 
         long xpnext = LevelConverser.getXPforLevel(level+1);
@@ -66,7 +66,7 @@ public class RankCommand extends Command {
         long xpleft = xptotal - xpcurrent;
         long xpfornext = xpnext - xpcurrent;
 
-        long giftleft = getNoodle().getLevels().registry().get(user).getGiftTimeout()-System.currentTimeMillis();
+        long giftleft = getNoodle().levels.registry().get(user).getGiftTimeout()-System.currentTimeMillis();
 
         String tilgift;
         if(giftleft>=0){
@@ -97,5 +97,10 @@ public class RankCommand extends Command {
     @Override
     public String description() {
         return "show your current XP / Level / GTO";
+    }
+
+    @Override
+    public String category() {
+        return "XP";
     }
 }

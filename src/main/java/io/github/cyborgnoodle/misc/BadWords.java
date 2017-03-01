@@ -20,10 +20,9 @@ import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Log;
-import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.msg.SystemMessages;
-import io.github.cyborgnoodle.server.ServerChannel;
+import io.github.cyborgnoodle.settings.data.ServerChannel;
+import io.github.cyborgnoodle.util.Random;
 
 import java.text.Normalizer;
 import java.util.Arrays;

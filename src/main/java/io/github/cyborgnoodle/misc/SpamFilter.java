@@ -21,11 +21,10 @@ import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.msg.ConversationMessages;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.settings.data.ServerRole;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  *
@@ -61,7 +60,7 @@ public class SpamFilter {
         User user = message.getAuthor();
 
         if(IGNORE_REGULARS){
-            if(user.getRoles(noodle.getServer()).contains(noodle.getRole(ServerRole.REGULAR))){
+            if(user.getRoles(noodle.getServer()).contains(noodle.getRole(ServerRole.FOUNDER))){
                 return false;
             }
         }

@@ -18,7 +18,7 @@ package io.github.cyborgnoodle.chatcli.commands.unit;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.misc.UnitConverter;
+import io.github.cyborgnoodle.features.converter.UnitConverter;
 
 import java.util.ArrayList;
 import java.util.Collections;

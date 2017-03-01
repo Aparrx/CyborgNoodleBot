@@ -16,23 +16,18 @@
 
 package io.github.cyborgnoodle;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import io.github.cyborgnoodle.levels.LevelRegistry;
-import io.github.cyborgnoodle.misc.ReactionWords;
-import io.github.cyborgnoodle.misc.WordStatsData;
-import io.github.cyborgnoodle.misc.funtance.DataCollection;
-import io.github.cyborgnoodle.news.InstagramRegistry;
-import io.github.cyborgnoodle.news.RedditData;
-import io.github.cyborgnoodle.settings.Settings;
-import io.github.cyborgnoodle.statistics.Statistics;
-import io.github.cyborgnoodle.statistics.data.StatisticsData;
+import io.github.cyborgnoodle.save.SaveFile;
+import io.github.cyborgnoodle.save.inv.*;
+import io.github.cyborgnoodle.util.Log;
+import javafx.util.Pair;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 /**
  * Created by arthur on 16.10.16.
@@ -41,171 +36,85 @@ public class SaveManager {
 
     CyborgNoodle noodle;
 
-    private static String CHARSET = "UTF-8";
+    private static Charset CHARSET = StandardCharsets.ISO_8859_1;
+
+    private HashMap<String,Pair<SaveFile,ConfigFile>> savefiles;
 
     public SaveManager(CyborgNoodle noods){
         this.noodle = noods;
+        this.savefiles = new HashMap<>();
+
+        savefiles.put("levels",new Pair<>(new LevelSaveFile(noodle),ConfigFile.LEVELS));
+        savefiles.put("general",new Pair<>(new InstagramSaveFile(noodle),ConfigFile.GENERAL));
+        savefiles.put("words",new Pair<>(new WordStatsSaveFile(noodle),ConfigFile.WORDS));
+        savefiles.put("funwords",new Pair<>(new FuntanceSaveFile(),ConfigFile.FUNTANCE));
+        savefiles.put("stats",new Pair<>(new StatisticsDataSaveFile(noodle),ConfigFile.STATS));
+        savefiles.put("reactions",new Pair<>(new ReactionWordsSaveFile(),ConfigFile.REACTIONS));
+        savefiles.put("markov",new Pair<>(new MarkovSaveFile(),ConfigFile.MARKOV));
+        savefiles.put("settings",new Pair<>(new SettingsSaveFile(noodle),ConfigFile.SETTINGS));
     }
 
-    public void saveAll(){
+    public HashMap<String, Pair<SaveFile, ConfigFile>> getSavefiles() {
+        return savefiles;
+    }
 
-        Log.info("saving data...");
+    public boolean saveAll(){
 
-        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT)
-                .setPrettyPrinting().create();
+        boolean errorfree = true;
 
-        String json = gson.toJson(noodle.getLevels().toLevelRegistry());
-        write(getConfigFile(ConfigFile.LEVELS),json);
-        String instajson = gson.toJson(noodle.getInstaRegistry());
-        write(getConfigFile(ConfigFile.GENERAL),instajson);
+        Log.info("Saving data...");
 
-        String redditjson = gson.toJson(noodle.getReddit().getData());
-        write(getConfigFile(ConfigFile.REDDIT),redditjson);
+        for(String name : savefiles.keySet()){
+            Pair<SaveFile, ConfigFile> entry = savefiles.get(name);
+            ConfigFile file = entry.getValue();
+            SaveFile save = entry.getKey();
+            Log.info("Saving "+name+" ...");
+            try {
+                String data = save.saveInternalString();
+                write(file.getConfigFile(),data);
+            } catch (SaveFile.SaveException e) {
+                Log.error("FAILED TO SAVE "+name);
+                e.printStackTrace();
+                errorfree = false;
+            }
+        }
 
-        String wordjson = gson.toJson(noodle.getWordStats().getData());
-        write(getConfigFile(ConfigFile.WORDS),wordjson);
-
-        DataCollection dc = new DataCollection();
-        dc.pull();
-        String dcjson = gson.toJson(dc);
-        write(getConfigFile(ConfigFile.FUNTANCE),dcjson);
-
-        StatisticsData statdat = Statistics.save();
-        String stjson = gson.toJson(statdat);
-        write(getConfigFile(ConfigFile.STATS),stjson);
-
-        Settings set = Settings.getSettings();
-        String setson = gson.toJson(set);
-        write(getConfigFile(ConfigFile.SETTINGS),setson);
-
-        ReactionWords words = ReactionWords.getWords();
-        String wjson = gson.toJson(words);
-        write(getConfigFile(ConfigFile.REACTIONS),wjson);
+        return errorfree;
 
     }
 
-    public void loadAll(){
+    public boolean loadAll(){
+
+        boolean errorfree = true;
 
         Log.info("loading data...");
 
-        Gson gson = new GsonBuilder().enableComplexMapKeySerialization().excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT)
-                .setPrettyPrinting().create();
-
-        String regcont = read(getConfigFile(ConfigFile.LEVELS));
-        if(!regcont.isEmpty()) {
-            LevelRegistry reg = gson.fromJson(regcont, LevelRegistry.class);
-            noodle.getLevels().setRegistry(reg);
+        for(String name : savefiles.keySet()){
+            Pair<SaveFile, ConfigFile> entry = savefiles.get(name);
+            ConfigFile file = entry.getValue();
+            SaveFile save = entry.getKey();
+            Log.info("Loading "+name+" ...");
+            try {
+                String data = read(file.getConfigFile());
+                save.loadInternalString(data);
+            } catch (SaveFile.SaveException e) {
+                Log.error("FAILED TO LOAD "+name);
+                e.printStackTrace();
+                errorfree = false;
+            }
         }
 
-        String instaregcont = read(getConfigFile(ConfigFile.GENERAL));
-        if(!regcont.isEmpty()) {
-            InstagramRegistry reg = gson.fromJson(instaregcont, InstagramRegistry.class);
-            noodle.setInstaRegistry(reg);
-        }
-        else{
-            noodle.setInstaRegistry(new InstagramRegistry());
-        }
-
-        String redditcont = read(getConfigFile(ConfigFile.REDDIT));
-        if(!redditcont.isEmpty()) {
-            RedditData data = gson.fromJson(redditcont, RedditData.class);
-            noodle.getReddit().setData(data);
-        }
-        else{
-            noodle.getReddit().setData(new RedditData());
-        }
-
-        String wordscont = read(getConfigFile(ConfigFile.WORDS));
-        if(!wordscont.isEmpty()) {
-            WordStatsData data = gson.fromJson(wordscont,WordStatsData.class);
-            noodle.getWordStats().setData(data);
-        }
-        else{
-            noodle.getWordStats().setData(new WordStatsData());
-        }
-
-        DataCollection collection;
-        String sgcont = read(getConfigFile(ConfigFile.FUNTANCE));
-        if(!sgcont.isEmpty()) {
-            collection = gson.fromJson(sgcont,DataCollection.class);
-        }
-        else {
-            collection = new DataCollection();
-            collection.pull();
-        }
-
-        collection.push();
-
-        String statscont = read(getConfigFile(ConfigFile.STATS));
-        if(!statscont.isEmpty()) {
-            StatisticsData data = gson.fromJson(statscont,StatisticsData.class);
-            Statistics.load(data);
-        }
-        else{
-            Statistics.load(new StatisticsData());
-        }
-
-        String sjson = read(getConfigFile(ConfigFile.SETTINGS));
-        if(!sjson.isEmpty()) {
-            Settings settings = gson.fromJson(sjson, Settings.class);
-            Settings.setSettings(settings);
-        }
-
-        String rjson = read(getConfigFile(ConfigFile.REACTIONS));
-        if(!sjson.isEmpty()) {
-            ReactionWords words = gson.fromJson(rjson, ReactionWords.class);
-            ReactionWords.setWords(words);
-        }
-
+        return errorfree;
     }
 
     // UTILITY
 
-    public File getConfigFile(ConfigFile file){
-        String conf = getConfigDir().toString();
-        String f;
-        switch (file){
-            case GENERAL:
-                f = "general.json";
-                break;
-            case LEVELS:
-                f = "levels.json";
-                break;
-            case REDDIT:
-                f = "reddit.json";
-                break;
-            case WORDS:
-                f = "words.json";
-                break;
-            case FUNTANCE:
-                f = "sentencegen.json";
-                break;
-            case STATS:
-                f = "statistics.json";
-                break;
-            case SETTINGS:
-                f = "settings.json";
-                break;
-            case AUTH:
-                f = "auth.json";
-                break;
-            case REACTIONS:
-                f = "reactions.json";
-                break;
-            default:
-                throw new NullPointerException("ConfigFile type can not be null or of other type!");
-        }
-
-        File cf = new File(conf+File.separator+f);
-        return cf;
-    }
-
-    public File getJarDirectory() throws URISyntaxException {
+    public static File getJarDirectory() throws URISyntaxException {
         File jardir = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile();
         return jardir;
     }
 
-    public File getConfigDir(){
+    public static File getConfigDir(){
         try {
             File f = getJarDirectory();
             return f;
@@ -227,7 +136,7 @@ public class SaveManager {
                 f.createNewFile();
                 return "";
             }
-            else return readFile(f.toString(),Charset.forName(CHARSET));
+            else return readFile(f.toString(),CHARSET);
 
         } catch (IOException e) {
             Log.error("Could not read from file! FATAL ERROR!");
@@ -238,7 +147,7 @@ public class SaveManager {
 
     public void write(File f, String content){
         try {
-            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), Charset.forName(CHARSET)));
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f), CHARSET));
             if(!f.exists()) f.createNewFile();
             try{
                 out.write(content);
@@ -254,7 +163,28 @@ public class SaveManager {
     }
 
     public enum ConfigFile{
-        GENERAL, LEVELS, REDDIT, WORDS, FUNTANCE, STATS, SETTINGS, AUTH, REACTIONS
+        GENERAL("general.json"),
+        LEVELS("levels.json"),
+        REDDIT("reddit.json"),
+        WORDS("words.json"),
+        FUNTANCE("sentencegen.json"),
+        STATS("statistics.json"),
+        SETTINGS("settings.json"),
+        AUTH("auth.json"),
+        REACTIONS("reactions.json"),
+        MARKOV("markov.json"),
+        ;
+
+        private String f;
+
+        ConfigFile(String f){
+            this.f = f;
+        }
+
+        public File getConfigFile(){
+            return new File(getConfigDir()+File.separator+f);
+        }
+
     }
 
 }

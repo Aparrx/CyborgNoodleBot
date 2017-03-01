@@ -17,7 +17,7 @@
 package io.github.cyborgnoodle.cli;
 
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Log;
+import io.github.cyborgnoodle.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;

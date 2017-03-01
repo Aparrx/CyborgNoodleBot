@@ -17,10 +17,10 @@
 package io.github.cyborgnoodle.chatcli.commands.meme;
 
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.settings.data.ServerRole;
+import io.github.cyborgnoodle.util.Random;
 
 /**
  * Created by arthur on 17.01.17.
@@ -37,7 +37,7 @@ public class ChoreCommand extends Command {
         if(Random.randInt(1,15)==1){
             k = "Go fuck yourself, ";
         } else k = "Go do your chores, ";
-        String message = k+ getNoodle().getAPI().getCachedUserById("229083996615606272").getMentionTag();
+        String message = k+ getNoodle().api.getCachedUserById("229083996615606272").getMentionTag();
         getChannel().sendMessage(message);
     }
 
@@ -63,11 +63,16 @@ public class ChoreCommand extends Command {
 
     @Override
     public Permission fullPermission() {
-        return new Permission(ServerRole.REGULAR);
+        return new Permission(ServerRole.FOUNDER);
     }
 
     @Override
     public String category() {
         return "Meme commands";
+    }
+
+    @Override
+    public boolean hidden() {
+        return true;
     }
 }

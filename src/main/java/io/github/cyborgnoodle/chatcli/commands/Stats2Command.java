@@ -17,20 +17,17 @@
 package io.github.cyborgnoodle.chatcli.commands;
 
 import com.google.common.util.concurrent.*;
-import de.btobastian.javacord.entities.Channel;
-import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.stats2.Stats2Callable;
-import io.github.cyborgnoodle.statistics.Statistics;
-import io.github.cyborgnoodle.statistics.StatsPair;
-import io.github.cyborgnoodle.statistics.data.*;
+import io.github.cyborgnoodle.features.statistics.Statistics;
+import io.github.cyborgnoodle.features.statistics.StatsPair;
+import io.github.cyborgnoodle.features.statistics.data.*;
+import io.github.cyborgnoodle.util.Log;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.Executors;
 
 /**
@@ -184,5 +181,10 @@ public class Stats2Command extends Command{
 
     public enum DisplayType{
         HOUR, HOUR12, TODAY, WEEK, MONTH, YEAR, ALL
+    }
+
+    @Override
+    public String category() {
+        return "Discord";
     }
 }

@@ -18,7 +18,7 @@ package io.github.cyborgnoodle.chatcli.commands.funtance;
 
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.misc.funtance.stories.GenericSentenceGenerator;
+import io.github.cyborgnoodle.features.funtance.stories.GenericSentenceGenerator;
 
 /**
  * Created by arthur on 16.01.17.
@@ -57,5 +57,10 @@ public class FunCommand extends Command {
     @Override
     public String category() {
         return "Sentence generator commands";
+    }
+
+    @Override
+    public boolean hidden() {
+        return true;
     }
 }

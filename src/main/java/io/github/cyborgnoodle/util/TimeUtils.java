@@ -18,7 +18,7 @@ package io.github.cyborgnoodle.util;
 
 import de.btobastian.javacord.entities.User;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.server.ServerUser;
+import io.github.cyborgnoodle.settings.data.ServerUser;
 
 import java.util.Calendar;
 import java.util.Locale;

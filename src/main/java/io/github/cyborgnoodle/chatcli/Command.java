@@ -20,12 +20,6 @@ import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.message.Message;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Random;
-import io.github.cyborgnoodle.levels.Levels;
-import io.github.cyborgnoodle.util.NumberEmoji;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  *
@@ -72,6 +66,10 @@ public abstract class Command {
     public abstract boolean emptyHelp();
 
     public abstract String description();
+
+    public boolean hidden(){
+        return false;
+    }
 
     public Permission fullPermission(){
         return new Permission();

@@ -22,15 +22,17 @@ import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.permissions.Role;
-import io.github.cyborgnoodle.chatbot.ChatBot;
-import io.github.cyborgnoodle.chatcli.*;
+import io.github.cyborgnoodle.chatcli.Permission;
 import io.github.cyborgnoodle.chatcli.commands.*;
 import io.github.cyborgnoodle.chatcli.commands.funtance.FunAddCommand;
 import io.github.cyborgnoodle.chatcli.commands.funtance.FunCommand;
 import io.github.cyborgnoodle.chatcli.commands.funtance.FunRemoveCommand;
 import io.github.cyborgnoodle.chatcli.commands.levels.AddXPCommand;
 import io.github.cyborgnoodle.chatcli.commands.levels.RemXPCommand;
-import io.github.cyborgnoodle.chatcli.commands.meme.*;
+import io.github.cyborgnoodle.chatcli.commands.meme.ChoreCommand;
+import io.github.cyborgnoodle.chatcli.commands.meme.FuxkitCommand;
+import io.github.cyborgnoodle.chatcli.commands.meme.SueCommand;
+import io.github.cyborgnoodle.chatcli.commands.meme.TeaCommand;
 import io.github.cyborgnoodle.chatcli.commands.poll.PollCommand;
 import io.github.cyborgnoodle.chatcli.commands.poll.ResultCommand;
 import io.github.cyborgnoodle.chatcli.commands.poll.VoteCommand;
@@ -40,22 +42,27 @@ import io.github.cyborgnoodle.chatcli.words.*;
 import io.github.cyborgnoodle.cli.CommandLine;
 import io.github.cyborgnoodle.cli.CommandLineRunnable;
 import io.github.cyborgnoodle.cli.Commands;
-import io.github.cyborgnoodle.levels.LevelUnblockerRunnable;
-import io.github.cyborgnoodle.levels.Levels;
+import io.github.cyborgnoodle.features.converter.AutoConverter;
+import io.github.cyborgnoodle.features.levels.Levels;
+import io.github.cyborgnoodle.features.news.News;
+import io.github.cyborgnoodle.features.news.Reddit;
+import io.github.cyborgnoodle.features.timed.CyborgTickRunnable;
+import io.github.cyborgnoodle.features.wordstats.WordStats;
 import io.github.cyborgnoodle.listener.MessageListener;
 import io.github.cyborgnoodle.listener.UserListener;
-import io.github.cyborgnoodle.misc.*;
-import io.github.cyborgnoodle.news.InstagramRegistry;
-import io.github.cyborgnoodle.news.InstagramRunnable;
-import io.github.cyborgnoodle.news.InstagramTool;
-import io.github.cyborgnoodle.news.Reddit;
-import io.github.cyborgnoodle.server.ServerChannel;
-import io.github.cyborgnoodle.server.ServerRole;
-import io.github.cyborgnoodle.server.ServerUser;
-import io.github.cyborgnoodle.statistics.Statistics;
+import io.github.cyborgnoodle.misc.BadWords;
+import io.github.cyborgnoodle.misc.Polls;
+import io.github.cyborgnoodle.misc.SpamFilter;
+import io.github.cyborgnoodle.settings.CyborgSettings;
+import io.github.cyborgnoodle.settings.data.ServerChannel;
+import io.github.cyborgnoodle.settings.data.ServerRole;
+import io.github.cyborgnoodle.settings.data.ServerUser;
+import io.github.cyborgnoodle.tick.CyborgTick;
+import io.github.cyborgnoodle.util.Log;
+import yahoofinance.YahooFinance;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -64,46 +71,78 @@ import java.util.concurrent.ExecutionException;
  */
 public class CyborgNoodle {
 
-    Boolean running;
-    Connection connection;
-    DiscordAPI api;
+    boolean testmode;
 
-    SaveManager saveman;
+    boolean running;
+    Connection connection;
+
+    // PRIVATE / OLD
 
     Commands cmds;
     CommandLine cmdline;
-    Levels levels;
-    ChatCommands chatcmds;
-    ChatBot chatBot;
-    InstagramTool instatool;
-    InstagramRegistry instareg;
 
     BadWords badwords;
-
-    Reddit reddit;
-
-    Waiter gamenamewt;
-    Waiter instawt;
-    Waiter lvlunblockwt;
-    Waiter redditmsgwt;
-    Waiter savewt;
-    Waiter wwt;
-    Waiter statswt;
-
-    Waiter relogwt;
-
-    WordStats words;
-
-    Polls polls;
-
     SpamFilter spam;
-
-
     ErrorNotifier notifier;
 
-    HashMap<Runnable,Long> later;
 
-    String SERVER = "274439447234347010";
+
+    // PUBLIC
+
+    /**
+     * HashMap containing runnables to run later (for the tick);
+     */
+    public HashMap<Runnable,Long> later;
+
+    /**
+     * Cyborg tick
+     */
+    public CyborgTick tick;
+
+    /**
+     * Reddit Utility for the bot
+     */
+    public Reddit reddit;
+
+    /**
+     * Polls
+     */
+    public Polls polls;
+
+    /**
+     * Word statistics
+     */
+    public WordStats words;
+
+    /**
+     * Levels
+     */
+
+    public Levels levels;
+
+    /**
+     * Save manager
+     */
+    public SaveManager savemanager;
+
+    /**
+     * The discord API
+     */
+    public DiscordAPI api;
+
+    /**
+     * The bot settings
+     */
+    public CyborgSettings settings;
+
+    /**
+     * The news
+     */
+    public News news;
+
+    //constant
+
+    final private String SERVER = "274439447234347010";
 
     public CyborgNoodle(Connection connection){
         this.running = true;
@@ -112,42 +151,29 @@ public class CyborgNoodle {
         this.cmds = new Commands(this);
         this.cmdline = new CommandLine(this);
         this.levels = new Levels(this);
-        this.chatcmds = new ChatCommands(this);
-
-        this.instatool = new InstagramTool(this);
-        this.instareg = new InstagramRegistry();
 
         this.badwords = new BadWords(this);
-
         this.reddit = new Reddit(this);
-
-        this.saveman = new SaveManager(this);
-
+        this.savemanager = new SaveManager(this);
         this.polls = new Polls();
-
         this.notifier = new ErrorNotifier(this);
-
         this.words = new WordStats();
-
         this.spam = new SpamFilter(this);
-
         this.later = new HashMap<>();
 
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.INFO);
+        this.tick = new CyborgTick(this);
+        this.settings = new CyborgSettings(Settings.Setting.getDefaultInstance());
+        this.news = new News(this);
 
-        Log.info(api.getChannels().toString());
-        startThreads();
-        registerListeners();
-        api.setAutoReconnect(true);
+        initBot();
+    }
 
-        saveman.loadAll();
+    public Boolean isTestmode() {
+        return testmode;
+    }
 
-        reddit.setUp();
-
-        registerCommands();
-
-        //say(SystemMessages.getStart());
+    public void setTestmode(Boolean testmode) {
+        this.testmode = testmode;
     }
 
     public Boolean isRunning(){
@@ -162,72 +188,41 @@ public class CyborgNoodle {
         return cmdline;
     }
 
-    public Levels getLevels(){
-        return levels;
-    }
-
-    public ChatCommands getChatCommands(){
-        return chatcmds;
-    }
-
-    public ChatBot getChatBot(){
-        return chatBot;
-    }
-
-    public SaveManager getSaveManager(){
-        return saveman;
-    }
-
-    public DiscordAPI getAPI(){
-        return api;
-    }
-
-    public InstagramTool getInstagram(){
-        return instatool;
-    }
-
-    public InstagramRegistry getInstaRegistry(){
-        return instareg;
-    }
-
-    public void setInstaRegistry(InstagramRegistry r){
-        this.instareg = r;
-    }
-
-    public ErrorNotifier getNotifier(){
-        return notifier;
-    }
-
-    public Reddit getReddit(){
-        return reddit;
-    }
-
     public BadWords getBadWords() {
         return badwords;
     }
 
-    public SpamFilter getSpamFilter(){
-        return spam;
-    }
+    // STARTUP / SHUTDOWN
 
-    public WordStats getWordStats(){
-        return words;
-    }
+    private void initBot(){
 
-    public Polls getPolls() {
-        return polls;
-    }
+        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.INFO);
 
-    public void say(String message){
-        Channel channel = this.getChannel(ServerChannel.GENERAL);
-        channel.sendMessage(message);
+        YahooFinance.logger.setLevel(java.util.logging.Level.OFF);
+
+        AutoConverter.cacheAliases();
+
+        Log.info(api.getChannels().toString());
+        startThreads();
+        registerListeners();
+        api.setAutoReconnect(true);
+
+        savemanager.loadAll();
+
+        reddit.setUp();
+
+        registerCommands();
+
+        Locale.setDefault(Locale.ENGLISH);
+
     }
 
     private void startThreads(){
 
-        initTick();
+        tick.init();
 
-        Thread tickt = new Thread(new CyborgTick(this));
+        Thread tickt = new Thread(new CyborgTickRunnable(this));
         tickt.setName("CN Tick");
         tickt.start();
 
@@ -249,7 +244,10 @@ public class CyborgNoodle {
         this.running = false;
         connection.setConnected(false);
 
-        saveman.saveAll();
+        if(isTestmode()){
+            Log.warn("NOT SAVING DUE TO TEST MODE!!!");
+        }
+        else savemanager.saveAll();
 
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         Log.info("RUNNING THREADS:");
@@ -269,75 +267,7 @@ public class CyborgNoodle {
         System.exit(0);
     }
 
-    public Server getServer(){
-        return api.getServerById(SERVER);
-    }
-
-    public Channel getChannel(ServerChannel c){
-        return api.getChannelById(c.getID());
-    }
-
-    public Role getRole(ServerRole r){
-        return getServer()
-                .getRoleById(
-                        r
-                                .getID());
-    }
-
-
-    //==============================//
-    //2s runner
-
-    public void initTick(){
-        gamenamewt = new Waiter(60000,new GameNameRunnable(this));
-        instawt = new Waiter(10000,new InstagramRunnable(this));
-        lvlunblockwt = new Waiter(1000,new LevelUnblockerRunnable(this));
-        redditmsgwt = new Waiter(10000, () -> {
-            if(getReddit().isConnected()){
-                getReddit().getManager().doCheck();
-            }
-        });
-        relogwt = new Waiter(10800000, () -> {
-            Log.info("Reconnecting ...");
-            connection.getAPI().disconnect();
-            connection.getAPI().connectBlocking();
-            Log.info("Reconnected.");
-        });
-
-        savewt = new Waiter(1800000,new AutoSaveRunnable(this));
-
-        // 2.5 minutes
-        statswt = new Waiter(150000, () -> Statistics.statsTick(null,null,getServer(),0));
-    }
-
-    public void runTick() throws Exception{
-
-        lvlunblockwt.run();
-        gamenamewt.run();
-        instawt.run();
-        //redditmsgwt.run();
-
-        savewt.run();
-
-        statswt.run();
-
-        //relogwt.run(); disable because JC has fixed the crash and it causes double logins
-        HashSet<Runnable> toremove = new HashSet<>();
-
-        for(Runnable r : later.keySet()){
-            long millis = later.get(r);
-            if(millis<System.currentTimeMillis()){
-                r.run();
-                toremove.add(r);
-            }
-        }
-
-        for(Runnable r : toremove) later.remove(r);
-    }
-
-    public synchronized void doLater(Runnable r, long millis){
-        later.put(r,System.currentTimeMillis()+millis);
-    }
+    // INIT
 
     public void registerCommands(){
         io.github.cyborgnoodle.chatcli.Commands.register(new LevelsCommand(this));
@@ -384,6 +314,24 @@ public class CyborgNoodle {
         io.github.cyborgnoodle.chatcli.Commands.register(new AddReactCommand(this));
 
         io.github.cyborgnoodle.chatcli.Commands.register(new IncidentCommand(this));
+
+        io.github.cyborgnoodle.chatcli.Commands.register(new MarkovCommand(this));
+
+        io.github.cyborgnoodle.chatcli.Commands.register(new FileCommand(this));
+    }
+
+    // API GETTERS
+
+    public Server getServer(){
+        return api.getServerById(SERVER);
+    }
+
+    public Channel getChannel(ServerChannel c){
+        return api.getChannelById(c.getID());
+    }
+
+    public Role getRole(ServerRole r){
+        return getServer().getRoleById(r.getID());
     }
 
     public boolean hasPermission(User user, Permission permission){
@@ -397,5 +345,11 @@ public class CyborgNoodle {
             e.printStackTrace();
             return null;
         }
+    }
+
+    // TIMED TASKS
+
+    public synchronized void doLater(Runnable r, long millis){
+        later.put(r,System.currentTimeMillis()+millis);
     }
 }

@@ -20,17 +20,15 @@ import de.btobastian.javacord.entities.Server;
 import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.entities.permissions.Role;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Log;
-import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.settings.data.ServerRole;
 import io.github.cyborgnoodle.util.JCUtil;
+import io.github.cyborgnoodle.util.Random;
+import io.github.cyborgnoodle.util.discord.Roles;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -94,7 +92,7 @@ public class MakeMeCommand extends Command {
                 return;
             }
 
-            User other = JCUtil.getUserByMention(getNoodle().getAPI(), mention);
+            User other = JCUtil.getUserByMention(getNoodle().api, mention);
 
             if(other==null){
                 getChannel().sendMessage("User not found!");
@@ -110,7 +108,7 @@ public class MakeMeCommand extends Command {
 
         Collection<Role> current = user.getRoles(server);
 
-        current.removeAll(Arrays.asList(ServerRole.resolveAll(getNoodle(),ServerRole.getCharacters())));
+        current.removeAll(Arrays.asList(Roles.resolveAll(getNoodle(),ServerRole.getCharacters())));
 
         if(nothing){
             getChannel().sendMessage(Random.choose(making)+" nothing...");
@@ -162,6 +160,11 @@ public class MakeMeCommand extends Command {
 
     @Override
     public Permission fullPermission() {
-        return new Permission(35);
+        return new Permission(25);
+    }
+
+    @Override
+    public String category() {
+        return "Discord";
     }
 }

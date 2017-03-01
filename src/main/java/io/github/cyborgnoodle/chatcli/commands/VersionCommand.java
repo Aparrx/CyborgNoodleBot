@@ -54,4 +54,14 @@ public class VersionCommand extends Command {
     public String description() {
         return "show bot version";
     }
+
+    @Override
+    public String category() {
+        return "System";
+    }
+
+    @Override
+    public boolean hidden() {
+        return true;
+    }
 }

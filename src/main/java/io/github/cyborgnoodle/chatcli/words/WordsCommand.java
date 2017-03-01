@@ -17,10 +17,10 @@
 package io.github.cyborgnoodle.chatcli.words;
 
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Log;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.settings.data.ServerRole;
+import io.github.cyborgnoodle.util.Log;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.CategoryChartBuilder;
@@ -47,7 +47,7 @@ public class WordsCommand extends Command {
         if(args.length==1){
             if(args[0].equalsIgnoreCase("max")){
                 if(getNoodle().getRole(ServerRole.OWNER).getUsers().contains(getAuthor())){
-                    max = getNoodle().getWordStats().getData().getMap().size();
+                    max = getNoodle().words.getData().getMap().size();
                 }
                 else max = 20;
             }
@@ -81,8 +81,8 @@ public class WordsCommand extends Command {
 
         List<String> words = new ArrayList<>();
         List<Long> counts = new ArrayList<>();
-        for(String word : getNoodle().getWordStats().getWordBoard().keySet()){
-            long num = getNoodle().getWordStats().getWordBoard().get(word);
+        for(String word : getNoodle().words.getWordBoard().keySet()){
+            long num = getNoodle().words.getWordBoard().get(word);
             words.add(word);
             counts.add(num);
             i++;

@@ -18,11 +18,11 @@ package io.github.cyborgnoodle.chatcli.commands.meme;
 
 import de.btobastian.javacord.entities.message.embed.EmbedBuilder;
 import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.Random;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
 import io.github.cyborgnoodle.msg.SystemMessages;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.settings.data.ServerRole;
+import io.github.cyborgnoodle.util.Random;
 
 import java.awt.*;
 
@@ -38,16 +38,16 @@ public class FuxkitCommand extends Command{
     @Override
     public void onCommand(String[] args) {
 
-        getNoodle().getAPI().setGame("with herself");
+        getNoodle().api.setGame("with herself");
 
         Boolean force = false;
-        if(args.length>1){
+        if(args.length>=1){
             if(args[1].equalsIgnoreCase("force")){
                 if(getNoodle().hasPermission(getAuthor(),new Permission(ServerRole.STAFF))) force = true;
             }
         }
 
-        int i = Random.randInt(0,9);
+        int i = Random.randInt(0,19);
 
         if(i==0 || force){
             String message = SystemMessages.getSmut();
@@ -84,5 +84,10 @@ public class FuxkitCommand extends Command{
     @Override
     public String description() {
         return "...";
+    }
+
+    @Override
+    public boolean hidden() {
+        return true;
     }
 }

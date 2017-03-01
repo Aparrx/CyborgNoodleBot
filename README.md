@@ -1,5 +1,30 @@
 ## CyborgNoodle
 
+### Features
+
+- shorten URLs (with goo.gl)
+- let the bot decide between different things or flip a coin
+- quote messages (with a lot of options)
+- help and descriptions for every single command
+- tell people to have some tea
+- tell people to do their chores
+- sue someone
+- generate typical sentences for users using markov chains and a database of all messages
+- generate random sentences using predefined words (non markov chain based)
+- count words and see what words were used the most (per-user and with graphs!)
+- XP and leveling system with a lot of options and a leaderbord
+- randomly drop xp bombs
+- show user time zones (configurable)
+- convert units
+- make a poll and have users vote for things
+- download a users avatar image
+- save messages as reactions and quote them with a shortcut
+- show statistics with graphs (user count, online users count, message count, activity, ...)
+- show file sizes
+- change bot settings with commands
+- simulate a chat with markov chains
+- ...
+
 ### Project Structure
 
 #### Dependencies
@@ -25,5 +50,4 @@
 ### Todo list
 (feel free to implement this yourself, as I am probably too lazy to do it)
 
-- rework XP / Leveling system
-- rework Commands
+- XP gambling

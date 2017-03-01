@@ -36,8 +36,8 @@ import com.google.common.base.Joiner;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
-import io.github.cyborgnoodle.misc.funtance.data.*;
-import io.github.cyborgnoodle.server.ServerRole;
+import io.github.cyborgnoodle.features.funtance.data.*;
+import io.github.cyborgnoodle.settings.data.ServerRole;
 
 import java.util.Arrays;
 
@@ -121,5 +121,10 @@ public class FunRemoveCommand extends Command {
     @Override
     public String category() {
         return "Sentence generator commands";
+    }
+
+    @Override
+    public boolean hidden() {
+        return true;
     }
 }

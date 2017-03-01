@@ -19,7 +19,7 @@ package io.github.cyborgnoodle.chatcli.words;
 import de.btobastian.javacord.entities.message.embed.EmbedBuilder;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
-import io.github.cyborgnoodle.misc.WordStats;
+import io.github.cyborgnoodle.features.wordstats.WordStats;
 import io.github.cyborgnoodle.util.StringUtils;
 
 /**
@@ -63,5 +63,10 @@ public class ExceptionsCommand extends Command {
     @Override
     public String category() {
         return "Word commands";
+    }
+
+    @Override
+    public boolean hidden() {
+        return true;
     }
 }

@@ -16,6 +16,8 @@
 
 package io.github.cyborgnoodle;
 
+import io.github.cyborgnoodle.util.Log;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.ExecutionException;
@@ -49,10 +51,8 @@ public class ErrorNotifier {
 
         try {
             noodle.api.getUserById(USER).get().sendMessage(msg);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        } catch (ExecutionException e1) {
-            e1.printStackTrace();
+        } catch (InterruptedException | ExecutionException e1) {
+            Log.stacktrace(e1);
         }
 
 

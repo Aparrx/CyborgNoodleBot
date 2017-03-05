@@ -14,30 +14,18 @@
  * limitations under the License.
  */
 
-package io.github.cyborgnoodle.features.news;
+package io.github.cyborgnoodle.cli.completer;
 
-import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.util.Log;
-import me.postaddict.instagramscraper.exception.InstagramException;
+import org.jline.reader.Candidate;
+import org.jline.reader.LineReader;
+import org.jline.reader.ParsedLine;
 
-import java.io.IOException;
+import java.util.List;
 
 /**
- * Created by arthur on 29.10.16.
+ * Created by arthur on 05.03.17.
  */
-public class InstagramRunnable implements Runnable{
+public interface ArgumentCompleter {
 
-    CyborgNoodle noodle;
-
-    public InstagramRunnable(CyborgNoodle noodle){
-        this.noodle = noodle;
-    }
-
-    public void run() {
-        try {
-            noodle.news.notifier.check();
-        } catch (IOException | InstagramException e) {
-            Log.stacktrace(e);
-        }
-    }
+    void complete(LineReader lineReader, ParsedLine parsedLine, List<Candidate> list, List<String> output);
 }

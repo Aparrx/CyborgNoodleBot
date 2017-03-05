@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
  */
 public class WordStats {
 
+    public static final Log.LogContext context = new Log.LogContext("WORD");
+
     private boolean first;
     WordStatsData data;
     public static String[] EXCEPT = new String[]{"cum","cumcum","it","the","to","you","is","are","not","be","just","how","its","bot","okay","crash","what","why","when",
@@ -86,7 +88,7 @@ public class WordStats {
         for(String word : counts.keySet()){
             Long count = counts.get(word);
             if(count<6) data.count(word,count,message.getAuthor());
-            else Log.warn("didnt count word "+word+" because of spam (word occured "+count+"x)");
+            else Log.warn("didnt count word "+word+" because of spam (word occured "+count+"x)",context);
         }
     }
 
@@ -120,14 +122,14 @@ public class WordStats {
 
     public void removeOldExceptions(){
         if(first){
-            Log.info("Executing new exceptions in Word counter ...");
+            Log.info("Executing new exceptions in Word counter ...",context);
             HashMap<String,Long> map = new HashMap<>(data.getMap());
             for(String word : map.keySet()){
                 String cword = BadWords.adjustMsg(word);
                 if(Arrays.asList(EXCEPT).contains(cword) ||
                         cword.contains("<#") ||
                         cword.contains("<@")){
-                    Log.info(" > removing "+word+" ("+map.get(word)+"x)");
+                    Log.info(" > removing "+word+" ("+map.get(word)+"x)",context);
                     data.remove(word);
                 }
             }

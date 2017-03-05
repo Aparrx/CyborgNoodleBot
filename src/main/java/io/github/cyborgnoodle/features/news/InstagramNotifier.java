@@ -107,7 +107,7 @@ public class InstagramNotifier {
                                     finalurl = GoogleURLShortening.shortenUrl(url);
                                 } catch (MalformedURLException e) {
                                     Log.error("Failed to short Instagram URL!");
-                                    e.printStackTrace();
+                                    Log.stacktrace(e);
                                     finalurl = url;
                                 }
 

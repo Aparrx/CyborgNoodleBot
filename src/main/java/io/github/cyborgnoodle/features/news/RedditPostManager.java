@@ -51,8 +51,8 @@ public class RedditPostManager {
             checkMessages();
         } catch (Exception e) {
             if(e instanceof NetworkException){
-                Log.error("NetworkException while reddit message checking... Reauthenticating...");
-                e.printStackTrace();
+                Log.error("NetworkException while reddit message checking... Reauthenticating...",Reddit.context);
+                Log.stacktrace(e,Reddit.context);
                 noodle.reddit.logout();
                 noodle.reddit.login();
             }
@@ -73,7 +73,7 @@ public class RedditPostManager {
 
         for(Message m : listing){
             if(!m.isComment() && !m.isRead()){
-                Log.info("new inbox item");
+                Log.info("new inbox item",Reddit.context);
                 String subj = m.getSubject();
                 InboxManager man = new InboxManager(reddit);
                 man.setRead(true,m);
@@ -82,7 +82,7 @@ public class RedditPostManager {
                     if(!id.isEmpty() && id!=null){
                         Submission sub = reddit.getSubmission(id);
                         if(sub!=null){
-                            Log.info("Got unrelated notice for "+id);
+                            Log.info("Got unrelated notice for "+id,Reddit.context);
                             RedditPost post = noodle.reddit.getData().getPost(id);
 
                             if(post==null){
@@ -94,12 +94,12 @@ public class RedditPostManager {
 
                             noodle.reddit.getData().setPost(post);
                         }
-                        else Log.warn("Got unrelated report, but Submission is null!");
+                        else Log.warn("Got unrelated report, but Submission is null!",Reddit.context);
                     }
-                    else Log.warn("Got unrelated report, but ID is empty!");
+                    else Log.warn("Got unrelated report, but ID is empty!",Reddit.context);
 
                 }
-                else Log.info("NEW PM ["+m.getAuthor()+"/"+m.getSubject()+"]: "+m.getBody()+"\n");
+                else Log.info("NEW PM ["+m.getAuthor()+"/"+m.getSubject()+"]: "+m.getBody()+"\n",Reddit.context);
             }
         }
     }
@@ -127,12 +127,12 @@ public class RedditPostManager {
 
     public void setFlair(Submission sub) throws Exception{
 
-        Log.warn("Tried to add flair to "+sub.getId()+" but it's currently not supported.");
+        Log.warn("Tried to add flair to "+sub.getId()+" but it's currently not supported.",Reddit.context);
 
     }
 
     public void removeFlair(Submission sub) throws Exception{
-        Log.warn("Tried to remove flair from "+sub.getId()+" but it's currently not supported.");
+        Log.warn("Tried to remove flair from "+sub.getId()+" but it's currently not supported.",Reddit.context);
     }
 
 

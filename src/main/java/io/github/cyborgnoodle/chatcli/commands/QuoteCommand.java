@@ -28,6 +28,7 @@ import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.misc.GoogleURLShortening;
 import io.github.cyborgnoodle.util.JCUtil;
+import io.github.cyborgnoodle.util.Log;
 import io.github.cyborgnoodle.util.Random;
 
 import javax.annotation.Nullable;
@@ -244,7 +245,7 @@ public class QuoteCommand extends Command {
             return GoogleURLShortening.shortenUrl(longlink);
         } catch (MalformedURLException e) {
             getChannel().sendMessage("Failed to create short URL!");
-            e.printStackTrace();
+            Log.stacktrace(e);
             return longlink;
         }
     }

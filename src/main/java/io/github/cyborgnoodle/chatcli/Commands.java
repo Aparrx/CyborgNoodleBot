@@ -71,7 +71,7 @@ public class Commands {
                 try {
                     command.execute(message,args);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.stacktrace(e);
                     message.getChannelReceiver().sendMessage("Internal Error: "+e.getClass().getSimpleName()+": "+e.getMessage());
                 }
                 return true;

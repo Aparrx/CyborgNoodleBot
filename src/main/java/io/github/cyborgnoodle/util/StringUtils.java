@@ -54,7 +54,7 @@ public class StringUtils {
 
             utf8tweet = new String(utf8Bytes, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Log.stacktrace(e);
         }
         Pattern unicodeOutliers = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]",
                                 Pattern.UNICODE_CASE |

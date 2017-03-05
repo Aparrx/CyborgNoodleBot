@@ -17,6 +17,7 @@
 package io.github.cyborgnoodle.features.timed;
 
 import io.github.cyborgnoodle.CyborgNoodle;
+import io.github.cyborgnoodle.tick.CyborgTick;
 import io.github.cyborgnoodle.util.Log;
 
 /**
@@ -32,17 +33,17 @@ public class CyborgTickRunnable implements Runnable {
 
     @Override
     public void run() {
-        Log.info("[TICK] Starting tick.");
+        Log.info("Starting tick.", CyborgTick.context);
         while (noodle.isRunning()){
             noodle.tick.doTick();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                Log.error("[TICK] Something interrupted the TICK!");
-                e.printStackTrace();
+                Log.error("Something interrupted the TICK!",CyborgTick.context);
+                Log.stacktrace(e);
                 //noodle..notifyError(e); TODO !!!
             }
         }
-        Log.info("[TICK] Stopped tick.");
+        Log.info("Stopped tick.", CyborgTick.context);
     }
 }

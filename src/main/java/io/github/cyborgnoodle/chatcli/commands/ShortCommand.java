@@ -19,6 +19,7 @@ package io.github.cyborgnoodle.chatcli.commands;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.misc.GoogleURLShortening;
+import io.github.cyborgnoodle.util.Log;
 
 import java.net.MalformedURLException;
 
@@ -43,7 +44,7 @@ public class ShortCommand extends Command {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.stacktrace(e);
         }
     }
 

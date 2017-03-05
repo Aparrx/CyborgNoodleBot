@@ -40,6 +40,7 @@ import java.util.HashMap;
  */
 public class Reddit {
 
+    public static final Log.LogContext context = new Log.LogContext("RDIT");
     public static String CURRENT_LINK = "https://discord.gg/FPdpChq";
 
     CyborgNoodle noodle;
@@ -74,7 +75,7 @@ public class Reddit {
 
     public void setUp(){
 
-        Log.info("Connecting to reddit...");
+        Log.info("Connecting to reddit...",context);
 
         UserAgent ua = UserAgent.of("desktop", "io.github.cyborgnoodle", "1.0", USERNAME);
         reddit = new RedditClient(ua);
@@ -86,17 +87,17 @@ public class Reddit {
 
     public void login(){
 
-        Log.info("Logging in to reddit...");
+        Log.info("Logging in to reddit...",context);
 
         try {
             OAuthData authData = reddit.getOAuthHelper().easyAuth(credentials);
             reddit.authenticate(authData);
             man = new AccountManager(reddit);
             connected = true;
-            Log.info("Logged in to reddit.");
+            Log.info("Logged in to reddit.",context);
         } catch (OAuthException e) {
-            Log.error("Could not authenticate with Reddit");
-            e.printStackTrace();
+            Log.error("Could not authenticate with Reddit",context);
+            Log.stacktrace(e);
             connected = false;
 
         }
@@ -104,12 +105,12 @@ public class Reddit {
 
     public void logout(){
 
-        Log.info("Logging out from reddit...");
+        Log.info("Logging out from reddit...",context);
 
         reddit.getOAuthHelper().revokeAccessToken(credentials);
         reddit.deauthenticate();
 
-        Log.info("Logged out from reddit.");
+        Log.info("Logged out from reddit.",context);
 
         connected = false;
 
@@ -139,23 +140,23 @@ public class Reddit {
 
         } catch (ApiException e) {
             if(e.getReason().equalsIgnoreCase("RATELIMIT")){
-                Log.warn("Could not post news because of rate limit, scheduling 5 minutes into future");
+                Log.warn("Could not post news because of rate limit, scheduling 5 minutes into future",context);
                 String finalCaption1 = caption;
                 noodle.doLater(() -> noodle.reddit.postNews(mediaurl, finalCaption1, stamp, author, instalink, authorlink),1000*60*5);
                 return;
             }
             else {
-                Log.error("Reddit Api Exception " + e.getMessage());
-                e.printStackTrace();
+                Log.error("Reddit Api Exception " + e.getMessage(),context);
+                Log.stacktrace(e,context);
                 return;
             }
 
         } catch (MalformedURLException e) {
-            Log.error("Reddit URL submitting: URL malformed: "+e.getMessage());
-            e.printStackTrace();
+            Log.error("Reddit URL submitting: URL malformed: "+e.getMessage(),context);
+            Log.stacktrace(e,context);
             return;
         } catch (NetworkException e){
-            Log.error("NetworkException while reddit posting. Reauthenticating... [try reposting again in 30 secs]");
+            Log.error("NetworkException while reddit posting. Reauthenticating... [try reposting again in 30 secs]",context);
             logout();
             login();
             String finalCaption1 = caption;
@@ -164,7 +165,7 @@ public class Reddit {
         }
 
         if(sub==null){
-            Log.error("Failed to post "+mediaurl+" to reddit! Submission is null!");
+            Log.error("Failed to post "+mediaurl+" to reddit! Submission is null!",context);
             return;
         }
 
@@ -173,8 +174,8 @@ public class Reddit {
             try {
                 man.reply(sub.getComments().getComment(),getCommentMessage(stamp,author,instalink,authorlink, finalCaption,sub.getId()));
             } catch (ApiException e) {
-                Log.error("Api Exception while making info comment: "+e.getMessage());
-                e.printStackTrace();
+                Log.error("Api Exception while making info comment: "+e.getMessage(),context);
+                Log.stacktrace(e,context);
             }
         };
 

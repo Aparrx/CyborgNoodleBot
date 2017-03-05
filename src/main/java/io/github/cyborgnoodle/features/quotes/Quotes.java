@@ -20,6 +20,7 @@ import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.message.Message;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.util.JCUtil;
+import io.github.cyborgnoodle.util.Log;
 
 import java.util.concurrent.ExecutionException;
 
@@ -45,7 +46,7 @@ public class Quotes {
             Message message = JCUtil.getChannelMessageByID(noodle.api, channel, msg).get();
             return new Quote(message);
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            Log.stacktrace(e);
             return null;
         }
     }

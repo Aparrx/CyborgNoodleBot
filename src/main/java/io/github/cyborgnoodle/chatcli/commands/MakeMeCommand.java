@@ -24,6 +24,7 @@ import io.github.cyborgnoodle.chatcli.Command;
 import io.github.cyborgnoodle.chatcli.Permission;
 import io.github.cyborgnoodle.settings.data.ServerRole;
 import io.github.cyborgnoodle.util.JCUtil;
+import io.github.cyborgnoodle.util.Log;
 import io.github.cyborgnoodle.util.Random;
 import io.github.cyborgnoodle.util.discord.Roles;
 
@@ -115,7 +116,7 @@ public class MakeMeCommand extends Command {
             try {
                 server.updateRoles(user,current.toArray(new Role[current.size()])).get();
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+                Log.stacktrace(e);
                 getChannel().sendMessage("Oh no, something went wrong! D:");
                 return;
             }
@@ -129,7 +130,7 @@ public class MakeMeCommand extends Command {
         try {
             server.updateRoles(user,current.toArray(new Role[current.size()])).get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            Log.stacktrace(e);
             getChannel().sendMessage("Oh no, something went wrong! D:");
             return;
         }

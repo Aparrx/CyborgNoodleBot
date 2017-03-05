@@ -32,19 +32,21 @@ import java.util.*;
  */
 public class Statistics {
 
+    public static final Log.LogContext context = new Log.LogContext("STATS");
+
     private static Map<StatsTime,DayStatistics> stats;
     private static long msgcount = 432884L;
 
     private static int STEP_LIMIT = 105120; //one year in 5 minutes
 
     public static void load(StatisticsData d){
-        Log.info("Loading stats from data");
+        Log.info("Loading stats from data",context);
         msgcount = d.getMessagecount();
         stats = d.getDays();
     }
 
     public static StatisticsData save(){
-        Log.info("Saving stats from data");
+        Log.info("Saving stats from data",context);
         return new StatisticsData(stats,msgcount);
     }
 

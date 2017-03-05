@@ -38,7 +38,7 @@ public class XPListener implements ChangeListener<Number> {
         long newValue = nnum.longValue();
 
         if(oldValue<newValue){ //mehr
-            Log.info(" + XP "+(newValue-oldValue)+" @"+tempUser.getUser().getName()+" => "+newValue);
+            Log.info(" + XP "+(newValue-oldValue)+" @"+tempUser.getUser().getName()+" => "+newValue,Levels.context);
             //tempUser.getRegistry().getNoodle().getChannel(ServerChannel.GENERAL).sendMessage("*"+(newValue-oldValue)+" XP was added to "+tempUser.getUser().getMentionTag()+"*");
 
             int nlvl = LevelConverser.getLevelforXP(newValue);
@@ -47,7 +47,7 @@ public class XPListener implements ChangeListener<Number> {
             }
         }
         else { // weniger
-            Log.info(" - XP "+(oldValue-newValue)+" @"+tempUser.getUser().getName()+" => "+newValue);
+            Log.info(" - XP "+(oldValue-newValue)+" @"+tempUser.getUser().getName()+" => "+newValue,Levels.context);
             tempUser.getRegistry().getNoodle().getChannel(ServerChannel.GENERAL).sendMessage("*"+(oldValue-newValue)+" XP was removed from "+tempUser.getUser().getMentionTag()+"*");
         }
 

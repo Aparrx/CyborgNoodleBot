@@ -16,8 +16,11 @@
 
 package io.github.cyborgnoodle.features.converter;
 
+import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.message.Message;
 import io.github.cyborgnoodle.CyborgNoodle;
+import io.github.cyborgnoodle.settings.CyborgSettings;
+import io.github.cyborgnoodle.util.StringUtils;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -54,70 +57,93 @@ public class AutoConverter {
 
         String[] parts = content.split(" ");
 
+        process(parts,noodle.settings,message.getChannelReceiver());
+    }
+
+    private static void process(String[] words, CyborgSettings settings, Channel channel){
+
         List<Pair<Double,UnitConverter.Unit>> list = new ArrayList<>();
 
-        int i = 0;
-        for(String part : parts){
-            UnitConverter.Unit unit = findUnit(part);
+        int index = 0;
+        for(String word : words){
 
-            if(unit!=null){
-                boolean skip = false;
-                switch (unit.getType()){
-                    case TEMPERATURE:
-                        skip = !noodle.settings.autoconv.temperature.get();
-                        break;
-                    case LENGTH:
-                        skip = !noodle.settings.autoconv.length.get();
-                        break;
-                    case AREA:
-                        skip = !noodle.settings.autoconv.area.get();
-                        break;
-                    case VOLUME:
-                        skip = !noodle.settings.autoconv.volume.get();
-                        break;
-                    case MASS:
-                        skip = !noodle.settings.autoconv.mass.get();
-                        break;
-                    case CURRENCY:
-                        skip = !noodle.settings.autoconv.currency.get();
-                        break;
-                    case TIME:
-                        skip = !noodle.settings.autoconv.time.get();
-                        break;
-                    case DISCORD:
-                        skip = true; // don't convert discord units
-                        break;
-                }
+            for(String a : aliases.keySet()){
 
-                if(!skip){
-                    try {
-                        String before = parts[i - 1]; // <num> <unit>
-                        Double num = Double.valueOf(before);
-                        Pair<Double,UnitConverter.Unit> pair = new Pair<>(num,unit);
-                        list.add(pair);
-                    } catch (Exception ignored) {}
-                    try {
-                        String before = parts[i + 1]; // <unit> <num>
-                        Double num = Double.valueOf(before);
-                        Pair<Double,UnitConverter.Unit> pair = new Pair<>(num,unit);
-                        list.add(pair);
-                    } catch (Exception ignored) {}
+                boolean found = false;
+                UnitConverter.Unit unit = null;
+                Double number = null;
 
-                    try {
-                        // <unit><num> or <num><unit>
-
-                        Double num = 0d;
-                        for(String al : unit.getAliases().getAliases()){ // maybe NullPointer ??
-                            part = part.replace(al, "");
+                if(word.equalsIgnoreCase(a)){
+                    // is unit
+                    unit = aliases.get(a);
+                    if(index>0){
+                        String before = words[index - 1];
+                        if(StringUtils.isNumeric(before)){
+                            number = Double.valueOf(before);
+                            found = true;
                         }
-                        num = Double.valueOf(part);
-                        Pair<Double,UnitConverter.Unit> pair = new Pair<>(num,unit);
-                        list.add(pair);
-                    } catch (Exception ignored) {}
+                    }
+                    if((index+1)<=(words.length-1)){
+                        String after = words[index + 1];
+                        if(StringUtils.isNumeric(after)){
+                            number = Double.valueOf(after);
+                            found = true;
+                        }
+                    }
+                }
+                else {
+                    String alow = a.toLowerCase();
+                    String wordlow = word.toLowerCase();
+                    if(wordlow.contains(alow)){
+                        //contains unit
+                        unit = aliases.get(a);
+                        String numtext = wordlow.replace(alow, "");
+                        if(StringUtils.isNumeric(numtext)){
+                            number = Double.valueOf(numtext);
+                            found = true;
+                        }
+                        else found = false;
+                    }
                 }
 
+                if(found){
+
+                    boolean enabled = false;
+                    switch (unit.getType()){
+                        case TEMPERATURE:
+                            enabled = settings.autoconv.temperature.get();
+                            break;
+                        case LENGTH:
+                            enabled = settings.autoconv.length.get();
+                            break;
+                        case AREA:
+                            enabled = settings.autoconv.area.get();
+                            break;
+                        case VOLUME:
+                            enabled = settings.autoconv.volume.get();
+                            break;
+                        case MASS:
+                            enabled = settings.autoconv.mass.get();
+                            break;
+                        case CURRENCY:
+                            enabled = settings.autoconv.currency.get();
+                            break;
+                        case TIME:
+                            enabled = settings.autoconv.time.get();
+                            break;
+                        case DISCORD:
+                            enabled = true; // don't convert discord units
+                            break;
+                    }
+
+                    if(enabled){
+                        list.add(new Pair<>(number,unit));
+                    }
+
+                }
             }
-            i++;
+
+            index++;
         }
 
         if(list.size()>0){
@@ -137,21 +163,17 @@ public class AutoConverter {
             }
 
             if(msg.length()>0){
-                message.getChannelReceiver().sendMessage(msg);
+                channel.sendMessage(msg);
             }
 
         }
+
     }
 
     private static UnitConverter.Unit findUnit(String part){
         UnitConverter.Unit found = UnitConverter.Unit.getByTyped(part);
         if(found!=null) return found;
         else{
-            for(String a : aliases.keySet()){
-                if(part.contains(a)){
-                    return aliases.get(a);
-                }
-            }
             return null;
         }
     }

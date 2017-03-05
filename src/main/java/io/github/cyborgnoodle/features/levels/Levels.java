@@ -37,16 +37,13 @@ import java.util.stream.Collectors;
  */
 public class Levels {
 
+    public static final Log.LogContext context = new Log.LogContext("XP");
+
     CyborgNoodle noodle;
 
     private HashMap<String,Long> blocklist;
 
     TempRegistry registry;
-
-    public static int MIN_MSG_XP_OUT = 25;
-    public static int MAX_MSG_XP_OUT = 85;
-    public static int MIN_BOMB_XP_OUT = 300;
-    public static int MAX_BOMB_XP_OUT = 5200;
 
     public Levels(CyborgNoodle noods){
         this.noodle = noods;
@@ -78,8 +75,8 @@ public class Levels {
                 long nextbounty = now + Random.randInt(noodle.settings.xp.bomb_timeout_min.get(), noodle.settings.xp.bomb_timeout_max.get())*60*1000;
                 registry.setNextBounty(nextbounty);
                 registry.get(usr).setGiftTimeout(LevelRegistry.TIMEOUT);
-                Log.info("Blocked "+usr.getName()+" for 48 hrs from xp gifts.");
-                Log.info("Next random xp gift was set to "+ Util.toTimeFormat(nextbounty-now) + " in the future!");
+                //Log.info("Blocked "+usr.getName()+" for 48 hrs from xp gifts.",context);
+                Log.info("Next random xp gift was set to "+ Util.toTimeFormat(nextbounty-now) + " in the future!",context);
                 int pxp = Random.randInt(noodle.settings.xp.bomb_min.get(),noodle.settings.xp.bomb_max.get());
 
                 noodle.getChannel(ServerChannel.GENERAL).sendMessage(usr.getMentionTag()+" was lucky enough to get a random **XP gift of "+pxp+" XP**!");
@@ -116,7 +113,7 @@ public class Levels {
                     srv.getRoleById(before.getID()).removeUser(user).get();
                     srv.getRoleById(after.getID()).addUser(user).get();
                 } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
+                    Log.stacktrace(e);
                 }
 
                 noodle.getChannel(ServerChannel.GENERAL).sendMessage(user.getMentionTag()+" is now a **"+srv.getRoleById(after.getID()).getName()+"**!");

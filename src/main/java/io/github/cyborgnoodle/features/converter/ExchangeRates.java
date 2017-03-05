@@ -54,7 +54,7 @@ public class ExchangeRates {
 
             } catch (IOException e) {
                 Log.error("Failed to fetch exchange rates for "+currency.name()+"! "+e.getMessage());
-                e.printStackTrace();
+                Log.stacktrace(e);
             }
 
         }

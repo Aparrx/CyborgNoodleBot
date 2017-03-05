@@ -39,9 +39,14 @@ import io.github.cyborgnoodle.chatcli.commands.poll.VoteCommand;
 import io.github.cyborgnoodle.chatcli.commands.unit.ConvertCommand;
 import io.github.cyborgnoodle.chatcli.commands.unit.UnitsCommand;
 import io.github.cyborgnoodle.chatcli.words.*;
+import io.github.cyborgnoodle.cli.CLICommands;
 import io.github.cyborgnoodle.cli.CommandLine;
 import io.github.cyborgnoodle.cli.CommandLineRunnable;
 import io.github.cyborgnoodle.cli.Commands;
+import io.github.cyborgnoodle.cli.commands.CLIHelpCommand;
+import io.github.cyborgnoodle.cli.commands.MentionCommand;
+import io.github.cyborgnoodle.cli.commands.SayCommand;
+import io.github.cyborgnoodle.cli.commands.StopCommand;
 import io.github.cyborgnoodle.features.converter.AutoConverter;
 import io.github.cyborgnoodle.features.levels.Levels;
 import io.github.cyborgnoodle.features.news.News;
@@ -64,12 +69,16 @@ import yahoofinance.YahooFinance;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
 /**
  * This class represents the bot itself and holds all methods for interacting with the bot
  */
 public class CyborgNoodle {
+
+    public static final Log.LogContext context = new Log.LogContext("BOT");
 
     boolean testmode;
 
@@ -213,6 +222,7 @@ public class CyborgNoodle {
         reddit.setUp();
 
         registerCommands();
+        registerCLICommands();
 
         Locale.setDefault(Locale.ENGLISH);
 
@@ -237,7 +247,7 @@ public class CyborgNoodle {
         api.registerListener(new UserListener(this));
     }
 
-    public void stop(){
+    public synchronized void stop(){
 
         //say(SystemMessages.getStop());
 
@@ -245,26 +255,33 @@ public class CyborgNoodle {
         connection.setConnected(false);
 
         if(isTestmode()){
-            Log.warn("NOT SAVING DUE TO TEST MODE!!!");
+            Log.warn("NOT SAVING DUE TO TEST MODE!!!",context);
         }
         else savemanager.saveAll();
 
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        Log.info("RUNNING THREADS:");
+        Log.info("RUNNING THREADS:",context);
         for(Thread t : threadSet){
             Log.info("- "+t.getName()+" | "+t.getState().toString());
         }
-        Log.info("Kill the process if it doesnt exit automatically within 10 seconds. (Ctrl+C)");
+        Log.info("Kill the process if it doesnt exit automatically within 10 seconds. (Ctrl+C)",context);
 
         api.disconnect();
 
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.stacktrace(e);
         }
 
         System.exit(0);
+    }
+
+    public void stopAsync(){
+        Executors.newSingleThreadExecutor().submit((Callable<Void>) () -> {
+            stop();
+            return null;
+        });
     }
 
     // INIT
@@ -320,6 +337,14 @@ public class CyborgNoodle {
         io.github.cyborgnoodle.chatcli.Commands.register(new FileCommand(this));
     }
 
+    public void registerCLICommands(){
+        CLICommands.register(new StopCommand(this));
+        CLICommands.register(new SayCommand(this));
+        CLICommands.register(new MentionCommand(this));
+
+        CLICommands.register(new CLIHelpCommand(this));
+    }
+
     // API GETTERS
 
     public Server getServer(){
@@ -342,7 +367,7 @@ public class CyborgNoodle {
         try {
             return api.getUserById(user.getID()).get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            Log.stacktrace(e);
             return null;
         }
     }

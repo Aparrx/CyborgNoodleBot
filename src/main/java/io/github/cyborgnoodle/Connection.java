@@ -26,6 +26,8 @@ import io.github.cyborgnoodle.util.Log;
  */
 public class Connection {
 
+    private static final Log.LogContext context = new Log.LogContext("NET");
+
     ConnectionState status;
     DiscordAPI api;
 
@@ -37,7 +39,7 @@ public class Connection {
     public void setConnected(Boolean c){
         //connect
         if(c){
-            Log.info("Connecting to Discord ...");
+            Log.info("Connecting to Discord ...",context);
             status = ConnectionState.CONNECTING;
             api.connect(new FutureCallback<DiscordAPI>() {
                 public void onSuccess(DiscordAPI discordAPI) {
@@ -46,22 +48,22 @@ public class Connection {
 
                 public void onFailure(Throwable t) {
                     status = ConnectionState.UNCONNECTED;
-                    Log.error("Could not connect to Discord: "+t.getMessage());
-                    t.printStackTrace();
+                    Log.error("Could not connect to Discord: "+t.getMessage(),context);
+                    Log.stacktrace(t,context);
                 }
             });
         }
         //disconnect
         else{
-            Log.info("Disconnecting from Discord");
+            Log.info("Disconnecting from Discord",context);
             api.disconnect();
             status = ConnectionState.UNCONNECTED;
-            Log.info("Disconnected.");
+            Log.info("Disconnected.",context);
         }
     }
 
     private void connected(){
-        Log.info("Connected to Discord");
+        Log.info("Connected to Discord",context);
         status = ConnectionState.CONNECTED;
     }
 

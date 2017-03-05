@@ -34,6 +34,8 @@ import java.util.HashMap;
  */
 public class SaveManager {
 
+    public static final Log.LogContext context = new Log.LogContext("SAVE");
+
     CyborgNoodle noodle;
 
     private static Charset CHARSET = StandardCharsets.ISO_8859_1;
@@ -62,19 +64,19 @@ public class SaveManager {
 
         boolean errorfree = true;
 
-        Log.info("Saving data...");
+        Log.info("Saving data...",context);
 
         for(String name : savefiles.keySet()){
             Pair<SaveFile, ConfigFile> entry = savefiles.get(name);
             ConfigFile file = entry.getValue();
             SaveFile save = entry.getKey();
-            Log.info("Saving "+name+" ...");
+            Log.info("Saving "+name+" ...",context);
             try {
                 String data = save.saveInternalString();
                 write(file.getConfigFile(),data);
             } catch (SaveFile.SaveException e) {
-                Log.error("FAILED TO SAVE "+name);
-                e.printStackTrace();
+                Log.error("FAILED TO SAVE "+name,context);
+                Log.stacktrace(e,context);
                 errorfree = false;
             }
         }
@@ -87,19 +89,19 @@ public class SaveManager {
 
         boolean errorfree = true;
 
-        Log.info("loading data...");
+        Log.info("loading data...",context);
 
         for(String name : savefiles.keySet()){
             Pair<SaveFile, ConfigFile> entry = savefiles.get(name);
             ConfigFile file = entry.getValue();
             SaveFile save = entry.getKey();
-            Log.info("Loading "+name+" ...");
+            Log.info("Loading "+name+" ...",context);
             try {
                 String data = read(file.getConfigFile());
                 save.loadInternalString(data);
             } catch (SaveFile.SaveException e) {
-                Log.error("FAILED TO LOAD "+name);
-                e.printStackTrace();
+                Log.error("FAILED TO LOAD "+name,context);
+                Log.stacktrace(e,context);
                 errorfree = false;
             }
         }
@@ -119,8 +121,8 @@ public class SaveManager {
             File f = getJarDirectory();
             return f;
         } catch (Exception e) {
-            Log.error("Could not find out where jar is located! FATAL ERROR!");
-            e.printStackTrace();
+            Log.error("Could not find out where jar is located! FATAL ERROR!",context);
+            Log.stacktrace(e,context);
             return null;
         }
     }
@@ -139,8 +141,8 @@ public class SaveManager {
             else return readFile(f.toString(),CHARSET);
 
         } catch (IOException e) {
-            Log.error("Could not read from file! FATAL ERROR!");
-            e.printStackTrace();
+            Log.error("Could not read from file! FATAL ERROR!",context);
+            Log.stacktrace(e,context);
             return "";
         }
     }
@@ -156,8 +158,8 @@ public class SaveManager {
                 out.close();
             }
         } catch (Exception e) {
-            Log.error("Could not write to file! FATAL ERROR!");
-            e.printStackTrace();
+            Log.error("Could not write to file! FATAL ERROR!",context);
+            Log.stacktrace(e,context);
         }
 
     }

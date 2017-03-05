@@ -51,7 +51,7 @@ public class Main {
             readAuth();
         } catch (Exception e) {
             Log.error("Failed to read Auth file!");
-            e.printStackTrace();
+            Log.stacktrace(e);
             return;
         }
 
@@ -83,7 +83,7 @@ public class Main {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 Log.error("Waiting for connection was interrupted: "+e.getMessage());
-                e.printStackTrace();
+                Log.stacktrace(e);
             }
         }
 
@@ -91,7 +91,7 @@ public class Main {
             CyborgNoodle noodle = new CyborgNoodle(connection);
             noodle.setTestmode(testmode);
             NOODLE = noodle;
-            Log.info("Successfully created CyborgNoodle Bot, ready.");
+            Log.info("Successfully created CyborgNoodle Bot, ready.",CyborgNoodle.context);
             if(noodle.isTestmode()) Log.warn("STARTING BOT IN TEST MODE!!!");
         }
         else{

@@ -22,6 +22,7 @@ import de.btobastian.javacord.entities.message.Message;
 import io.github.cyborgnoodle.CyborgNoodle;
 import io.github.cyborgnoodle.msg.ConversationMessages;
 import io.github.cyborgnoodle.settings.data.ServerRole;
+import io.github.cyborgnoodle.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -151,7 +152,7 @@ public class SpamFilter {
                 Message message1 = channel.sendMessage(ConversationMessages.getInsult() + " " + u.getMentionTag()).get();
                 noodle.doLater(() -> message1.edit("[spam by "+u.getName()+"]"),10000L);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.stacktrace(e);
             }
 
             return true;

@@ -204,7 +204,7 @@ public class Stats2Callable implements Callable<Void> {
             @Override
             public void onFailure(Throwable throwable) {
                 Log.error("Failed to delete status message for graph creation: "+ throwable.getMessage());
-                throwable.printStackTrace();
+                Log.stacktrace(throwable);
             }
         });
 

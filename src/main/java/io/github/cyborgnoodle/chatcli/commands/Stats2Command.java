@@ -60,7 +60,7 @@ public class Stats2Command extends Command{
                 message.delete();
                 getChannel().sendMessage("Failed to create graph!");
                 Log.error("Failed to create graph!");
-                throwable.printStackTrace();
+                Log.stacktrace(throwable);
             }
         });
     }

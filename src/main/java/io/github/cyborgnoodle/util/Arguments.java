@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package io.github.cyborgnoodle.features.news;
-
-import io.github.cyborgnoodle.CyborgNoodle;
-import io.github.cyborgnoodle.util.Log;
-import me.postaddict.instagramscraper.exception.InstagramException;
-
-import java.io.IOException;
+package io.github.cyborgnoodle.util;
 
 /**
- * Created by arthur on 29.10.16.
+ * Created by arthur on 05.03.17.
  */
-public class InstagramRunnable implements Runnable{
+public class Arguments {
 
-    CyborgNoodle noodle;
+    private String[] array;
 
-    public InstagramRunnable(CyborgNoodle noodle){
-        this.noodle = noodle;
+    public Arguments(String[] array) {
+        this.array = array;
     }
 
-    public void run() {
-        try {
-            noodle.news.notifier.check();
-        } catch (IOException | InstagramException e) {
-            Log.stacktrace(e);
-        }
+    public String get(int index) throws ArrayIndexOutOfBoundsException {
+        return array[index];
+    }
+
+    public boolean has(int index) {
+        return (index+1)<=array.length;
     }
 }

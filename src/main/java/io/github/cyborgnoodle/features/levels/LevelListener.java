@@ -43,7 +43,7 @@ public class LevelListener implements ChangeListener<Number> {
         int newValue = nnum.intValue();
 
         if(oldValue<newValue){ //mehr
-            Log.info(" + LEVEL "+(newValue-oldValue)+" @"+tempUser.getUser().getName()+" => "+newValue);
+            Log.info(" + LEVEL "+(newValue-oldValue)+" @"+tempUser.getUser().getName()+" => "+newValue,Levels.context);
             tempUser.getRegistry().getNoodle().getChannel(ServerChannel.GENERAL).sendMessage(tempUser.getUser().getMentionTag()+" advanced to Level **"+newValue+"**!");
 
             ServerRole srole = RankCalculator.getRoleforLevel(newValue);
@@ -59,8 +59,8 @@ public class LevelListener implements ChangeListener<Number> {
                     try {
                         ro.removeUser(tempUser.getUser()).get();
                     } catch (InterruptedException | ExecutionException e) {
-                        Log.error("Failed to remove role "+r+" from @"+tempUser.getUser().getName());
-                        e.printStackTrace();
+                        Log.error("Failed to remove role "+r+" from @"+tempUser.getUser().getName(),Levels.context);
+                        Log.stacktrace(e,Levels.context);
                     }
                 }
 
@@ -70,8 +70,8 @@ public class LevelListener implements ChangeListener<Number> {
                     try {
                         role.addUser(tempUser.getUser()).get();
                     } catch (InterruptedException | ExecutionException e) {
-                        Log.error("Failed to add role "+srole+" to @"+tempUser.getUser().getName());
-                        e.printStackTrace();
+                        Log.error("Failed to add role "+srole+" to @"+tempUser.getUser().getName(),Levels.context);
+                        Log.stacktrace(e,Levels.context);
                     }
 
                     tempUser.getRegistry().getNoodle().getChannel(ServerChannel.GENERAL).sendMessage(tempUser.getUser().getMentionTag()+" is now a **"+role.getName()+"**!");

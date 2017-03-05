@@ -46,7 +46,7 @@ public class TempRegistry {
             try {
                user = noodle.api.getUserById(uid).get();
             } catch (InterruptedException | ExecutionException ignored) {
-                Log.error("Failed to get user by ID "+uid);
+                Log.error("Failed to get user by ID "+uid,Levels.context);
                 break;
             }
 

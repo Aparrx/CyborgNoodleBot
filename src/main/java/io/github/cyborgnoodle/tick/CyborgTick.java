@@ -37,6 +37,7 @@ import java.util.concurrent.Executors;
 public class CyborgTick {
 
     private CyborgNoodle noodle;
+    public static final Log.LogContext context = new Log.LogContext("TICK");
 
     // WAITERS
 
@@ -83,8 +84,8 @@ public class CyborgTick {
         try {
             tick();
         } catch (Exception e) {
-            Log.error("Exception in TICK: "+e.getMessage());
-            e.printStackTrace();
+            Log.error("Exception in TICK: "+e.getMessage(),context);
+            Log.stacktrace(e);
         }
     }
 

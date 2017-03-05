@@ -68,8 +68,8 @@ public class UnitConverter {
         TONNE(UnitType.MASS, "t", UnitSystem.METRIC, "Tonne", Unit.KILOGRAM, 1000.0d, 0.001d, new Aliases("ton","tons","tonnes","tns","t")),
 
         //LENGTH
-        INCH(UnitType.LENGTH,"in",UnitSystem.IMPERIAL,"Inch", Unit.METRE, 0.0254d, 39.3701d, new Aliases("inch","inchs","inches","in")),
-        FOOT(UnitType.LENGTH,"ft",UnitSystem.IMPERIAL,"Feet", Unit.METRE, 0.3048d, 3.28084d, new Aliases("foot","foots","ft")),
+        INCH(UnitType.LENGTH,"in",UnitSystem.IMPERIAL,"Inch", Unit.METRE, 0.0254d, 39.3701d, new Aliases("inch","inchs","inches")),
+        FOOT(UnitType.LENGTH,"ft",UnitSystem.IMPERIAL,"Feet", Unit.METRE, 0.3048d, 3.28084d, new Aliases("foot","foots","ft","''")),
         YARD(UnitType.LENGTH,"yd",UnitSystem.IMPERIAL,"Yard", Unit.METRE, 0.9144d, 1.09361d, new Aliases("yard","yards","yd")),
         MILE(UnitType.LENGTH,"mi",UnitSystem.IMPERIAL,"Mile", Unit.METRE, 1609.34d, 0.000621371d, new Aliases("mile","ml","miles","mis","mi")),
 

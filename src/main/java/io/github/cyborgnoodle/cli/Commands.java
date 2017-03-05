@@ -52,6 +52,7 @@ public class Commands {
 
         if(cmd.equals("stop")){
             noodle.stop();
+            return;
         }
 
         if(cmd.equals("save")){
@@ -84,7 +85,7 @@ public class Commands {
                     if(e instanceof TimeoutException) Log.error("Timeout 10 secs: USER");
                     else{
                         Log.error("Interrupted / Other: USER");
-                        e.printStackTrace();
+                        Log.stacktrace(e);
                     }
                     return;
                 }
@@ -111,7 +112,7 @@ public class Commands {
                     if(e instanceof TimeoutException) Log.error("Timeout 10 secs: UPDATE_ROLES");
                     else{
                         Log.error("Interrupted / Other: UPDATE_ROLES");
-                        e.printStackTrace();
+                        Log.stacktrace(e);
                     }
                     return;
                 }
@@ -146,13 +147,13 @@ public class Commands {
                 Log.info(size+" msgs in #general");
             } catch (InterruptedException e) {
                 Log.info("Interrupted during counting");
-                e.printStackTrace();
+                Log.stacktrace(e);
             } catch (ExecutionException e) {
                 Log.info("EXE EXCEPTION");
-                e.printStackTrace();
+                Log.stacktrace(e);
             } catch (TimeoutException e) {
                 Log.info("Connection timed out");
-                e.printStackTrace();
+                Log.stacktrace(e);
             }
         }
 
@@ -198,7 +199,7 @@ public class Commands {
                     Log.info(t.getId()+" - "+t.getText()+" | "+t.getCssClass()+" | "+t.getPosition());
                 }
             } catch (ApiException e) {
-                e.printStackTrace();
+                Log.stacktrace(e);
             }
         }
 

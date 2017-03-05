@@ -28,6 +28,7 @@ import io.github.cyborgnoodle.features.calculator.AutoCalculator;
 import io.github.cyborgnoodle.features.converter.AutoConverter;
 import io.github.cyborgnoodle.features.markov.Markov;
 import io.github.cyborgnoodle.features.statistics.Statistics;
+import io.github.cyborgnoodle.settings.data.ServerChannel;
 import io.github.cyborgnoodle.util.Log;
 import io.github.cyborgnoodle.util.Random;
 
@@ -48,10 +49,14 @@ public class MessageListener implements MessageCreateListener, MessageEditListen
             if (!message.getAuthor().equals(noodle.api.getYourself())) {
                 if (true) { //workaround original: !noodle.getSpamFilter().isSpam(message)
 
-                    if(noodle.settings.xp.gain.get()) noodle.levels.onMessage(message.getAuthor());
+                    if(noodle.settings.xp.gain.get() && !noodle.isTestmode()) noodle.levels.onMessage(message.getAuthor());
 
                     boolean wascmd = Commands.execute(message, noodle.isTestmode());
-                    if(!wascmd) Markov.getData().message(message.getAuthor().getId(),message.getContent());
+                    if(!wascmd){
+                        ServerChannel sch = ServerChannel.byID(message.getChannelReceiver().getId());
+                        if(!noodle.settings.markov.exluded_channels.contains(sch))
+                        Markov.getData().message(message.getAuthor().getId(),message.getContent());
+                    }
                     if(true) Statistics.onMessage(message); //TODO
                     if(noodle.settings.chat.comment_badwords.get()) noodle.getBadWords().onMessage(message);
 
@@ -71,7 +76,7 @@ public class MessageListener implements MessageCreateListener, MessageEditListen
         }
         catch (Exception e){
             Log.error("listener error");
-            e.printStackTrace();
+            Log.stacktrace(e);
         }
 
     }

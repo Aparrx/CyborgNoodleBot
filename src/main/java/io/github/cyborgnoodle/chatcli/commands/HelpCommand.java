@@ -154,7 +154,7 @@ public class HelpCommand extends Command {
         } catch (InterruptedException | ExecutionException e1) {
             Log.error("Failed to send !help output!");
             Log.error(e1.getMessage());
-            e1.printStackTrace();
+            Log.stacktrace(e1);
         }
 
     }

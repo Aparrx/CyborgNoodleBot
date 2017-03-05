@@ -16,6 +16,7 @@
 
 package io.github.cyborgnoodle.util;
 
+import com.google.common.base.Throwables;
 import io.github.cyborgnoodle.misc.LogColor;
 
 import java.io.PrintStream;
@@ -26,24 +27,106 @@ import java.util.Calendar;
  */
 public class Log {
 
-    public static void log(String msg, PrintStream s){
+    private static Logger logger;
+    private static final LogContext defaultcontext = new LogContext(null);
+
+    static {
+        logger = new StandardLogger();
+    }
+
+    public static void setLogger(Logger l){
+        logger = l;
+    }
+
+    public static Logger getLogger(){
+        return logger;
+    }
+
+    public static void logCustom(String msg, PrintStream s){
         s.println(msg);
     }
 
-    public static void log(String msg){
-        log(msg,System.out);
+    public static void logError(String msg){
+        logger.logError(msg);
+    }
+
+    public static void logNormal(String msg){
+        logger.logNormal(msg);
+    }
+
+    public static void info(String msg, boolean raw, LogContext context){
+        if(raw) logNormal(msg);
+        else logNormal("["+getTimeStamp()+"][I]"+getContextBox(context)+" "+msg);
+    }
+
+    public static void warn(String msg, boolean raw, LogContext context){
+        if(raw) logNormal(msg);
+        else logNormal("["+getTimeStamp()+"]"+LogColor.ANSI_YELLOW+"[W]"+LogColor.ANSI_RESET+getContextBox(context)+" "+msg);
+    }
+
+    public static void error(String msg, boolean raw, LogContext context){
+        if(raw) logError(msg);
+        else logError("["+getTimeStamp()+"]"+LogColor.ANSI_RED+"[E]"+LogColor.ANSI_RESET+getContextBox(context)+" "+msg);
+    }
+
+    public static void stacktrace(Throwable throwable, boolean stampless, LogContext context){
+        String trace = Throwables.getStackTraceAsString(throwable);
+        error(trace, stampless,context);
     }
 
     public static void info(String msg){
-        log("["+getTimeStamp()+"][I] "+msg);
+        info(msg,false,defaultcontext);
     }
 
     public static void warn(String msg){
-        log("["+getTimeStamp()+"]"+LogColor.ANSI_YELLOW+"[W]"+LogColor.ANSI_RESET+" "+msg);
+        warn(msg,false,defaultcontext);
     }
 
     public static void error(String msg){
-        log("["+getTimeStamp()+"]"+LogColor.ANSI_RED+"[E]"+LogColor.ANSI_RESET+" "+msg,System.err);
+        error(msg,false,defaultcontext);
+    }
+
+    public static void stacktrace(Throwable throwable){
+        stacktrace(throwable,false,defaultcontext);
+    }
+
+    public static void info(String msg, boolean raw){
+        info(msg,raw,defaultcontext);
+    }
+
+    public static void warn(String msg, boolean raw){
+        warn(msg,raw,defaultcontext);
+    }
+
+    public static void error(String msg, boolean raw){
+        error(msg,raw,defaultcontext);
+    }
+
+    public static void stacktrace(Throwable throwable, boolean raw){
+        stacktrace(throwable,raw,defaultcontext);
+    }
+
+    public static void info(String msg, LogContext context){
+        info(msg,false,context);
+    }
+
+    public static void warn(String msg, LogContext context){
+        warn(msg,false,context);
+    }
+
+    public static void error(String msg, LogContext context){
+        error(msg,false,context);
+    }
+
+    public static void stacktrace(Throwable throwable, LogContext context){
+        stacktrace(throwable,false,context);
+    }
+
+    private static String getContextBox(LogContext context){
+        String cbox;
+        if(context==null || context.getPrefix()==null) cbox = "";
+        else cbox = "["+context.getPrefix()+"]";
+        return cbox;
     }
 
     public static String getTimeStamp(){
@@ -82,5 +165,46 @@ public class Log {
 
         return sday+"-"+smonth+"-"+syear+" "+shour+":"+sminute+":"+ssecond;
 
+    }
+
+    public interface Logger {
+        PrintStream normal();
+        PrintStream error();
+        void logNormal(String msg);
+        void logError(String msg);
+    }
+
+    public static class StandardLogger implements Logger{
+        @Override
+        public PrintStream normal() {
+            return System.out;
+        }
+        @Override
+        public PrintStream error() {
+            return System.err;
+        }
+
+        @Override
+        public void logNormal(String msg) {
+            normal().println(msg);
+        }
+
+        @Override
+        public void logError(String msg) {
+            error().println(msg);
+        }
+    }
+
+    public static class LogContext {
+
+        private final String prefix;
+
+        public LogContext(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
     }
 }
